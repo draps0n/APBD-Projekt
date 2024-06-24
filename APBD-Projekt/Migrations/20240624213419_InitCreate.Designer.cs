@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APBD_Projekt.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240624202447_CreateFinish")]
-    partial class CreateFinish
+    [Migration("20240624213419_InitCreate")]
+    partial class InitCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,20 +29,18 @@ namespace APBD_Projekt.Migrations
                 {
                     b.Property<int>("IdCategory")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdCategory");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCategory"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("IdCategory");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Client", b =>
@@ -56,32 +54,37 @@ namespace APBD_Projekt.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("Address");
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Email");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Phone");
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.HasKey("IdClient");
 
-                    b.ToTable("Client");
+                    b.ToTable("Clients");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Client");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Contract", b =>
                 {
                     b.Property<int>("IdContract")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdContract");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdContract"));
 
@@ -94,24 +97,20 @@ namespace APBD_Projekt.Migrations
                         .HasColumnName("FinalPrice");
 
                     b.Property<int>("IdClient")
-                        .HasColumnType("int")
-                        .HasColumnName("IdClient");
+                        .HasColumnType("int");
 
                     b.Property<int?>("IdDiscount")
-                        .HasColumnType("int")
-                        .HasColumnName("IdDiscount");
+                        .HasColumnType("int");
 
                     b.Property<int>("IdSoftwareVersion")
-                        .HasColumnType("int")
-                        .HasColumnName("IdSoftwareVersion");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime")
                         .HasColumnName("StartDate");
 
                     b.Property<int>("YearsOfSupport")
-                        .HasColumnType("int")
-                        .HasColumnName("YearsOfSupport");
+                        .HasColumnType("int");
 
                     b.HasKey("IdContract");
 
@@ -121,15 +120,14 @@ namespace APBD_Projekt.Migrations
 
                     b.HasIndex("IdSoftwareVersion");
 
-                    b.ToTable("Contract");
+                    b.ToTable("Contracts");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.ContractPayment", b =>
                 {
                     b.Property<int>("IdContractPayment")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ContractPayment");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdContractPayment"));
 
@@ -138,8 +136,7 @@ namespace APBD_Projekt.Migrations
                         .HasColumnName("DateTime");
 
                     b.Property<int>("IdContract")
-                        .HasColumnType("int")
-                        .HasColumnName("IdContract");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("PaymentAmount")
                         .HasColumnType("money")
@@ -149,15 +146,14 @@ namespace APBD_Projekt.Migrations
 
                     b.HasIndex("IdContract");
 
-                    b.ToTable("ContractPayment");
+                    b.ToTable("ContractPayments");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Discount", b =>
                 {
                     b.Property<int>("IdDiscount")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdDiscount");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDiscount"));
 
@@ -168,12 +164,10 @@ namespace APBD_Projekt.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<int>("Percentage")
-                        .HasColumnType("int")
-                        .HasColumnName("Percentage");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime")
@@ -184,57 +178,51 @@ namespace APBD_Projekt.Migrations
 
                     b.HasKey("IdDiscount");
 
-                    b.ToTable("Discount");
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.RenewalTime", b =>
                 {
                     b.Property<int>("IdRenewalTime")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdRenewalTime");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRenewalTime"));
 
                     b.Property<int>("Months")
-                        .HasColumnType("int")
-                        .HasColumnName("Months");
+                        .HasColumnType("int");
 
                     b.Property<int>("Years")
-                        .HasColumnType("int")
-                        .HasColumnName("Years");
+                        .HasColumnType("int");
 
                     b.HasKey("IdRenewalTime");
 
-                    b.ToTable("RenewalTime");
+                    b.ToTable("RenewalTimes");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Role", b =>
                 {
                     b.Property<int>("IdRole")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdRole");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRole"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("IdRole");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Software", b =>
                 {
                     b.Property<int>("IdSoftware")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdSoftware");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSoftware"));
 
@@ -261,8 +249,7 @@ namespace APBD_Projekt.Migrations
                 {
                     b.Property<int>("IdSoftwareVersion")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdSoftwareVersion");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSoftwareVersion"));
 
@@ -278,15 +265,14 @@ namespace APBD_Projekt.Migrations
 
                     b.HasIndex("IdSoftware");
 
-                    b.ToTable("SoftwareVersion");
+                    b.ToTable("SoftwareVersions");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Subscription", b =>
                 {
                     b.Property<int>("IdSubscription")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdSubscription");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSubscription"));
 
@@ -295,16 +281,13 @@ namespace APBD_Projekt.Migrations
                         .HasColumnName("EndDate");
 
                     b.Property<int>("IdClient")
-                        .HasColumnType("int")
-                        .HasColumnName("IdClient");
+                        .HasColumnType("int");
 
                     b.Property<int?>("IdDiscount")
-                        .HasColumnType("int")
-                        .HasColumnName("IdDiscount");
+                        .HasColumnType("int");
 
                     b.Property<int>("IdSubscriptionOffer")
-                        .HasColumnType("int")
-                        .HasColumnName("IdSubscriptionOffer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime")
@@ -318,31 +301,27 @@ namespace APBD_Projekt.Migrations
 
                     b.HasIndex("IdSubscriptionOffer");
 
-                    b.ToTable("Subscription");
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.SubscriptionOffer", b =>
                 {
                     b.Property<int>("IdSubscriptionOffer")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdSubscriptionOffer");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSubscriptionOffer"));
 
                     b.Property<int>("IdRenewalTime")
-                        .HasColumnType("int")
-                        .HasColumnName("IdRenewalTime");
+                        .HasColumnType("int");
 
                     b.Property<int>("IdSoftware")
-                        .HasColumnType("int")
-                        .HasColumnName("IdSoftware");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("money")
@@ -354,15 +333,14 @@ namespace APBD_Projekt.Migrations
 
                     b.HasIndex("IdSoftware");
 
-                    b.ToTable("SubscriptionOffer");
+                    b.ToTable("SubscriptionOffers");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.SubscriptionPayment", b =>
                 {
                     b.Property<int>("IdSubscriptionPayment")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdSubscriptionPayment");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSubscriptionPayment"));
 
@@ -371,46 +349,40 @@ namespace APBD_Projekt.Migrations
                         .HasColumnName("DateTime");
 
                     b.Property<int>("IdSubscription")
-                        .HasColumnType("int")
-                        .HasColumnName("IdSubscription");
+                        .HasColumnType("int");
 
                     b.HasKey("IdSubscriptionPayment");
 
                     b.HasIndex("IdSubscription");
 
-                    b.ToTable("SubscriptionPayment");
+                    b.ToTable("SubscriptionPayments");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.User", b =>
                 {
                     b.Property<int>("IdUser")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("IdUser");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUser"));
 
                     b.Property<int>("IdRole")
-                        .HasColumnType("int")
-                        .HasColumnName("IdRole");
+                        .HasColumnType("int");
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Login");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)")
-                        .HasColumnName("Password");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)")
-                        .HasColumnName("RefreshToken");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<DateTime?>("RefreshTokenExp")
                         .HasColumnType("datetime")
@@ -419,14 +391,13 @@ namespace APBD_Projekt.Migrations
                     b.Property<string>("Salt")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Salt");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("IdUser");
 
                     b.HasIndex("IdRole");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CategorySoftware", b =>
@@ -434,12 +405,12 @@ namespace APBD_Projekt.Migrations
                     b.Property<int>("CategoriesIdCategory")
                         .HasColumnType("int");
 
-                    b.Property<int>("SoftwaresIdSoftware")
+                    b.Property<int>("SoftwareIdSoftware")
                         .HasColumnType("int");
 
-                    b.HasKey("CategoriesIdCategory", "SoftwaresIdSoftware");
+                    b.HasKey("CategoriesIdCategory", "SoftwareIdSoftware");
 
-                    b.HasIndex("SoftwaresIdSoftware");
+                    b.HasIndex("SoftwareIdSoftware");
 
                     b.ToTable("CategorySoftware");
                 });
@@ -451,16 +422,14 @@ namespace APBD_Projekt.Migrations
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("CompanyName");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("KRS")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("KRS");
+                        .HasColumnType("nvarchar(10)");
 
-                    b.ToTable("CompanyClient");
+                    b.HasDiscriminator().HasValue("CompanyClient");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.IndividualClient", b =>
@@ -470,22 +439,19 @@ namespace APBD_Projekt.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("LastName");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PESEL")
                         .IsRequired()
                         .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)")
-                        .HasColumnName("PESEL");
+                        .HasColumnType("nvarchar(11)");
 
-                    b.ToTable("IndividualClient");
+                    b.HasDiscriminator().HasValue("IndividualClient");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Contract", b =>
@@ -611,25 +577,7 @@ namespace APBD_Projekt.Migrations
 
                     b.HasOne("APBD_Projekt.Models.Software", null)
                         .WithMany()
-                        .HasForeignKey("SoftwaresIdSoftware")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("APBD_Projekt.Models.CompanyClient", b =>
-                {
-                    b.HasOne("APBD_Projekt.Models.Client", null)
-                        .WithOne()
-                        .HasForeignKey("APBD_Projekt.Models.CompanyClient", "IdClient")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("APBD_Projekt.Models.IndividualClient", b =>
-                {
-                    b.HasOne("APBD_Projekt.Models.Client", null)
-                        .WithOne()
-                        .HasForeignKey("APBD_Projekt.Models.IndividualClient", "IdClient")
+                        .HasForeignKey("SoftwareIdSoftware")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
