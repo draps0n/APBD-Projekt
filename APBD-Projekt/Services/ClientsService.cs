@@ -77,4 +77,16 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
     {
         return requestModel.ClientType == ClientType.Company && requestModel.CompanyName != null && requestModel.KRS != null;
     }
+
+    public async Task DeleteClientByIdAsync(int clientId)
+    {
+        var client = await clientsRepository.GetClientByIdAsync(clientId);
+        if (client == null)
+        {
+            throw new NotFoundException($"Client with id: {clientId} does not exist");
+        }
+
+        client.Delete();
+        await clientsRepository.UpdateClientAsync(client);
+    }
 }

@@ -27,4 +27,14 @@ public class ClientsRepository(DatabaseContext context) : IClientsRepository
     {
         return await context.IndividualClients.Where(c => c.PESEL == pesel).FirstOrDefaultAsync();
     }
+
+    public async Task<Client?> GetClientByIdAsync(int clientId)
+    {
+        return await context.Clients.Where(c => c.IdClient == clientId).FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateClientAsync(Client client)
+    {
+        await context.SaveChangesAsync();
+    }
 }

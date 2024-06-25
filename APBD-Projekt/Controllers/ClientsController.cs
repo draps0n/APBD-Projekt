@@ -27,7 +27,7 @@ public class ClientsController(IClientsService clientsService) : ControllerBase
     }
 
     [HttpPut("{clientId:int}")]
-    public async Task<IActionResult> UpdateClientAsync(int clientId)
+    public async Task<IActionResult> UpdateClientAsync([FromRoute] int clientId)
     {
         return StatusCode(StatusCodes.Status204NoContent);
     }
@@ -35,6 +35,18 @@ public class ClientsController(IClientsService clientsService) : ControllerBase
     [HttpDelete("{clientId:int}")]
     public async Task<IActionResult> DeleteClientAsync(int clientId)
     {
-        return StatusCode(StatusCodes.Status204NoContent);
+        try
+        {
+            await clientsService.DeleteClientByIdAsync(clientId);
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (BadRequestException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }

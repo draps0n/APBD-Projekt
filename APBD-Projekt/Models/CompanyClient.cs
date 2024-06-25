@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using APBD_Projekt.Exceptions;
 
 namespace APBD_Projekt.Models;
 
@@ -19,5 +19,10 @@ public class CompanyClient : Client
     {
         CompanyName = companyName;
         KRS = krs;
+    }
+
+    public override void Delete()
+    {
+        throw new BadRequestException("Company clients cannot be deleted");
     }
 }

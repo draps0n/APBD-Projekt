@@ -5,4 +5,5 @@ namespace APBD_Projekt.Services;
 public interface IClientsService
 {
     Task CreateNewClientAsync(CreateClientRequestModel requestModel);
+    Task DeleteClientByIdAsync(int clientId);
 }

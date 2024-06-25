@@ -6,21 +6,21 @@ namespace APBD_Projekt.Models;
 public abstract class Client
 {
     [Key]
-    public int IdClient { get; private set; }
+    public int IdClient { get; protected set; }
 
     [Required]
     [MaxLength(250)]
-    public string Address { get; private set; }
+    public string Address { get; protected set; }
 
     [Required]
     [EmailAddress]
     [MaxLength(250)]
-    public string Email { get; private set; }
+    public string Email { get; protected set; }
 
     [Required]
     [Phone]
     [MaxLength(9)]
-    public string Phone { get; private set; }
+    public string Phone { get; protected set; }
 
 
     public ICollection<Contract> Contracts { get; private set; } = [];
@@ -34,4 +34,6 @@ public abstract class Client
         Email = email;
         Phone = phone;
     }
+
+    public abstract void Delete();
 }

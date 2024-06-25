@@ -77,7 +77,7 @@ builder.Services.AddAuthentication(options =>
             return Task.CompletedTask;
         }
     };
-}).AddJwtBearer("IgnoreTokenExpirationScheme",opt =>
+}).AddJwtBearer("IgnoreTokenExpirationScheme", opt =>
 {
     opt.TokenValidationParameters = new TokenValidationParameters
     {

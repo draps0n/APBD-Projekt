@@ -25,4 +25,14 @@ public class IndividualClient : Client
         LastName = lastName;
         PESEL = pesel;
     }
+
+    public override void Delete()
+    {
+        Address = String.Empty;
+        Email = String.Empty;
+        Phone = String.Empty;
+        Name = String.Empty;
+        LastName = String.Empty;
+        PESEL = String.Empty;
+    }
 }
