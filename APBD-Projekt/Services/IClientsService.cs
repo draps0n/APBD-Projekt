@@ -6,4 +6,6 @@ public interface IClientsService
 {
     Task CreateNewClientAsync(CreateClientRequestModel requestModel);
     Task DeleteClientByIdAsync(int clientId);
+
+    Task UpdateClientByIdAsync(int clientId, UpdateClientRequestModel requestModel);
 }

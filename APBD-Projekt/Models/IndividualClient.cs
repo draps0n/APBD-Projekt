@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using APBD_Projekt.Enums;
+using APBD_Projekt.Exceptions;
+using APBD_Projekt.RequestModels;
 
 namespace APBD_Projekt.Models;
 
@@ -16,6 +18,9 @@ public class IndividualClient : Client
     [Required]
     [MaxLength(11)]
     public string PESEL { get; private set; }
+    
+    [Required]
+    public bool IsDeleted { get; private set; }
 
     protected IndividualClient() { }
 
@@ -24,15 +29,41 @@ public class IndividualClient : Client
         Name = name;
         LastName = lastName;
         PESEL = pesel;
+        IsDeleted = false;
     }
 
     public override void Delete()
     {
-        Address = String.Empty;
-        Email = String.Empty;
-        Phone = String.Empty;
-        Name = String.Empty;
-        LastName = String.Empty;
-        PESEL = String.Empty;
+        Address = string.Empty;
+        Email = string.Empty;
+        Phone = string.Empty;
+        Name = string.Empty;
+        LastName = string.Empty;
+        PESEL = string.Empty;
+        IsDeleted = true;
+    }
+
+    public override void Update(UpdateClientRequestModel requestModel)
+    {
+        EnsureClientNotDeleted();
+        base.Update(requestModel);
+        Name = requestModel.Name!;
+        LastName = requestModel.LastName!;
+    }
+
+    private void EnsureClientNotDeleted()
+    {
+        if (IsDeleted)
+        {
+            throw new BadRequestException("Cannot update deleted client");
+        }
+    }
+
+    public override void EnsureIsOfType(ClientType clientType)
+    {
+        if (clientType != ClientType.Individual)
+        {
+            throw new BadRequestException($"Client of id: {IdClient} is a individual client!");
+        }
     }
 }

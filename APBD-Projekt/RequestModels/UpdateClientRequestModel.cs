@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-using APBD_Projekt.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace APBD_Projekt.RequestModels;
 
-public class CreateClientRequestModel
+public class UpdateClientRequestModel
 {
     [Required]
     [MaxLength(250)]
@@ -29,12 +28,6 @@ public class CreateClientRequestModel
     [MaxLength(50)]
     public string? LastName { get; set; }
 
-    [MaxLength(11)]
-    public string? PESEL { get; set; }
-
     [MaxLength(100)]
     public string? CompanyName { get; set; }
-
-    [MaxLength(10)]
-    public string? KRS { get; set; }
 }

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using APBD_Projekt.Enums;
 using APBD_Projekt.Exceptions;
+using APBD_Projekt.RequestModels;
 
 namespace APBD_Projekt.Models;
 
@@ -24,5 +26,19 @@ public class CompanyClient : Client
     public override void Delete()
     {
         throw new BadRequestException("Company clients cannot be deleted");
+    }
+
+    public override void Update(UpdateClientRequestModel requestModel)
+    {
+        base.Update(requestModel);
+        CompanyName = requestModel.CompanyName!;
+    }
+
+    public override void EnsureIsOfType(ClientType clientType)
+    {
+        if (clientType != ClientType.Company)
+        {
+            throw new BadRequestException($"Client of id: {IdClient} is a company client!");
+        }
     }
 }

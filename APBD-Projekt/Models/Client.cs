@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using APBD_Projekt.Enums;
+using APBD_Projekt.RequestModels;
 
 namespace APBD_Projekt.Models;
 
@@ -36,4 +38,12 @@ public abstract class Client
     }
 
     public abstract void Delete();
+
+    public virtual void Update(UpdateClientRequestModel requestModel)
+    {
+        Address = requestModel.Address;
+        Email = requestModel.Email;
+        Phone = requestModel.Phone;
+    }
+    public abstract void EnsureIsOfType(ClientType clientType);
 }
