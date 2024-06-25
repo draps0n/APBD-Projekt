@@ -1,17 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APBD_Projekt.Models;
 
 public class Role
 {
     [Key]
-    public int IdRole { get; set; }
+    public int IdRole { get; private set; }
 
     [Required]
     [MaxLength(50)]
-    public required string Name { get; set; }
+    public string Name { get; private set; }
 
-    
-    public ICollection<User> Users { get; set; }
+
+    public ICollection<User> Users { get; private set; } = [];
+
+    protected Role()
+    {
+
+    }
+
+    public Role(string name)
+    {
+        Name = name;
+    }
 }

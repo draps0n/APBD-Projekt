@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Xml.Schema;
 using APBD_Projekt.Exceptions;
 using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
@@ -15,31 +16,40 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
     public async Task RegisterUserAsync(string login, string password)
     {
         var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var standardUserRole = await GetOrAddStandardRoleAsync();
+        await EnsureLoginIsUniqueAsync(login);
 
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            SecurityHelpers.GenerateRefreshToken(),
+            DateTime.Now.AddDays(1),
+            standardUserRole
+        );
+
+        await usersRepository.RegisterUserAsync(user);
+    }
+
+    private async Task<Role> GetOrAddStandardRoleAsync()
+    {
         var standardUserRole = await usersRepository.GetRoleByNameAsync("standard");
 
         if (standardUserRole is null)
         {
-            standardUserRole = new Role { Name = "standard" };
+            standardUserRole = new Role("standard");
             await usersRepository.CreateRoleAsync(standardUserRole);
         }
 
+        return standardUserRole;
+    }
+
+    private async Task EnsureLoginIsUniqueAsync(string login)
+    {
         if (await usersRepository.GetUserByLoginAsync(login) != null)
         {
             throw new BadRequestException($"User of {login} already exists");
         }
-
-        var user = new User
-        {
-            Login = login,
-            Password = hashedPasswordAndSalt.Item1,
-            Salt = hashedPasswordAndSalt.Item2,
-            RefreshToken = SecurityHelpers.GenerateRefreshToken(),
-            RefreshTokenExp = DateTime.Now.AddDays(1),
-            Role = standardUserRole
-        };
-
-        await usersRepository.RegisterUserAsync(user);
     }
 
     public async Task<LoginUserResponseModel> LoginUserAsync(string login, string password)
@@ -51,28 +61,18 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
             throw new UnauthorizedException("Invalid login or password");
         }
 
-        var hashedPasswordWithSalt = user.Password;
-        var userSalt = user.Salt;
-        var currentPasswordHash = SecurityHelpers.GetHashedPasswordWithSalt(password, userSalt);
+        user.EnsurePasswordIsValid(password);
 
-        if (currentPasswordHash != hashedPasswordWithSalt)
-        {
-            Console.WriteLine(currentPasswordHash);
-            Console.WriteLine(hashedPasswordWithSalt);
-            throw new UnauthorizedException("Invalid login or password");
-        }
+        var accessToken = GenerateJwtTokenForUser(user);
+        user.UpdateRefreshToken();
 
-        var token = GenerateJwtTokenForUser(user);
-
-        var refreshToken = SecurityHelpers.GenerateRefreshToken();
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExp = DateTime.Now.AddDays(1);
+        // TODO: unit of work pattern
         await usersRepository.UpdateUserRefreshTokenAsync(user);
 
         return new LoginUserResponseModel
         {
-            JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-            RefreshToken = refreshToken
+            JwtToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
+            RefreshToken = user.RefreshToken
         };
     }
 
@@ -89,24 +89,16 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
             throw new SecurityTokenException("Invalid access token");
         }
 
-        CheckIfUsersRefTokenMatchAndIsValid(user, refreshToken);
+        user.EnsureUsersRefreshTokenMatchesAndIsValid(refreshToken);
 
         var token = GenerateJwtTokenForUser(user);
-
-        await UpdateUsersRefToken(user);
+        user.UpdateRefreshToken();
 
         return new RefreshTokenResponseModel
         {
             JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
             RefreshToken = user.RefreshToken
         };
-    }
-
-    private async Task UpdateUsersRefToken(User user)
-    {
-        user.RefreshToken = SecurityHelpers.GenerateRefreshToken();
-        user.RefreshTokenExp = DateTime.Now.AddDays(1);
-        await usersRepository.UpdateUserRefreshTokenAsync(user);
     }
 
     private JwtSecurityToken GenerateJwtTokenForUser(User user)
@@ -128,18 +120,5 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
         );
 
         return token;
-    }
-
-    private static void CheckIfUsersRefTokenMatchAndIsValid(User user, string refreshToken)
-    {
-        if (user.RefreshTokenExp < DateTime.Now)
-        {
-            throw new SecurityTokenException("Refresh token expired");
-        }
-
-        if (user.RefreshToken != refreshToken)
-        {
-            throw new SecurityTokenException("Invalid refresh token");
-        }
     }
 }

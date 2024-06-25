@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen(option =>
                     Id="Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
@@ -44,6 +44,8 @@ builder.Services.AddDbContext<DatabaseContext>(opt =>
 );
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
 
 SecurityHelpers.Configure(builder.Configuration);
 
