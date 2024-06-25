@@ -8,39 +8,18 @@ namespace APBD_Projekt.Models;
 
 public class User
 {
-    [Key]
     public int IdUser { get; private set; }
-
-    [Required]
-    [MaxLength(50)]
     public string Login { get; private set; }
-
-    [Required]
-    [MaxLength(60)]
     public string Password { get; private set; }
-
-    [Required]
-    [MaxLength(30)]
     public string Salt { get; private set; }
-
-    [Required]
-    [ForeignKey(nameof(Role))]
     public int IdRole { get; private set; }
-
-    [Required]
-    [MaxLength(60)]
     public string RefreshToken { get; private set; }
-
-    [Column("RefreshTokenExp", TypeName = "datetime")]
     public DateTime? RefreshTokenExp { get; private set; }
-
 
     public Role Role { get; private set; }
 
-
     protected User()
     {
-
     }
 
     public User(string login, string password, string salt, string refreshToken, DateTime? refreshTokenExp, Role role)

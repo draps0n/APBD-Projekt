@@ -1,17 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace APBD_Projekt.Models;
+﻿namespace APBD_Projekt.Models;
 
 public class Category
 {
-    [Key]
-    public int IdCategory { get; set; }
+    public int IdCategory { get; private set; }
+    public string Name { get; private set; }
 
-    [Required]
-    [MaxLength(50)]
-    public string Name { get; set; }
+    public ICollection<Software> Software { get; private set; }
 
-    
-    public ICollection<Software> Software { get; set; }
+    protected Category()
+    {
+    }
+
+    public Category(string name)
+    {
+        Name = name;
+    }
 }

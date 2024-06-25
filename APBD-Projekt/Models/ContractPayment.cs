@@ -1,25 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace APBD_Projekt.Models;
+﻿namespace APBD_Projekt.Models;
 
 public class ContractPayment
 {
-    [Key]
-    public int IdContractPayment { get; set; }
+    public int IdContractPayment { get; private set; }
+    public int IdContract { get; private set; }
+    public decimal PaymentAmount { get; private set; }
+    public DateTime DateTime { get; private set; }
 
-    [Required]
-    [ForeignKey(nameof(Contract))]
-    public int IdContract { get; set; }
+    public Contract Contract { get; private set; }
 
-    [Required]
-    [Column("PaymentAmount", TypeName = "money")]
-    public decimal PaymentAmount { get; set; }
+    protected ContractPayment()
+    {
+    }
 
-    [Required]
-    [Column("DateTime", TypeName = "datetime")]
-    public DateTime DateTime { get; set; }
-    
-    
-    public Contract Contract { get; set; }
+    public ContractPayment(decimal paymentAmount, DateTime dateTime, Contract contract)
+    {
+        PaymentAmount = paymentAmount;
+        DateTime = dateTime;
+        Contract = contract;
+    }
 }

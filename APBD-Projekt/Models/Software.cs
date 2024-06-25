@@ -1,27 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace APBD_Projekt.Models;
+﻿namespace APBD_Projekt.Models;
 
 public class Software
 {
-    [Key]
-    public int IdSoftware { get; set; }
+    public int IdSoftware { get; private set; }
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public decimal YearlyLicensePrice { get; private set; }
 
-    [Required]
-    [MaxLength(150)]
-    public string Name { get; set; }
+    public ICollection<Category> Categories { get; private set; }
+    public ICollection<SoftwareVersion> SoftwareVersions { get; private set; }
+    public ICollection<SubscriptionOffer> SubscriptionOffers { get; private set; }
 
-    [Required]
-    [MaxLength(500)]
-    public string Description { get; set; }
+    protected Software()
+    {
+    }
 
-    [Required]
-    [Column("YearlyLicensePrice", TypeName = "money")]
-    public decimal YearlyLicensePrice { get; set; }
-
-    
-    public ICollection<Category> Categories { get; set; }
-    public ICollection<SoftwareVersion> SoftwareVersions { get; set; }
-    public ICollection<SubscriptionOffer> SubscriptionOffers { get; set; }
+    public Software(string name, string description, decimal yearlyLicensePrice)
+    {
+        Name = name;
+        Description = description;
+        YearlyLicensePrice = yearlyLicensePrice;
+    }
 }

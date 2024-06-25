@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using APBD_Projekt.Enums;
+﻿using APBD_Projekt.Enums;
 using APBD_Projekt.Exceptions;
 using APBD_Projekt.RequestModels;
 
@@ -7,17 +6,15 @@ namespace APBD_Projekt.Models;
 
 public class CompanyClient : Client
 {
-    [Required]
-    [MaxLength(100)]
     public string CompanyName { get; private set; }
-
-    [Required]
-    [MaxLength(10)]
     public string KRS { get; private set; }
 
-    protected CompanyClient() { }
+    protected CompanyClient()
+    {
+    }
 
-    public CompanyClient(string address, string email, string phone, string companyName, string krs) : base(address, email, phone)
+    public CompanyClient(string address, string email, string phone, string companyName, string krs) : base(address,
+        email, phone)
     {
         CompanyName = companyName;
         KRS = krs;

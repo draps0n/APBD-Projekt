@@ -1,6 +1,6 @@
 ﻿using APBD_Projekt.Models;
 
-namespace APBD_Projekt.Repositories;
+namespace APBD_Projekt.Repositories.Abstractions;
 
 public interface IClientsRepository
 {

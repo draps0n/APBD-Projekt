@@ -2,7 +2,9 @@
 using APBD_Projekt.Exceptions;
 using APBD_Projekt.Models;
 using APBD_Projekt.Repositories;
+using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.RequestModels;
+using APBD_Projekt.Services.Abstractions;
 
 namespace APBD_Projekt.Services;
 

@@ -1,31 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace APBD_Projekt.Models;
+﻿namespace APBD_Projekt.Models;
 
 public class SubscriptionOffer
 {
-    [Key]
-    public int IdSubscriptionOffer { get; set; }
+    public int IdSubscriptionOffer { get; private set; }
+    public string Name { get; private set; }
+    public int IdSoftware { get; private set; }
+    public decimal Price { get; private set; }
+    public int IdRenewalTime { get; private set; }
 
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; }
+    public Software Software { get; private set; }
+    public RenewalTime RenewalTime { get; private set; }
+    public ICollection<Subscription> Subscriptions { get; private set; }
 
-    [Required]
-    [ForeignKey(nameof(Software))]
-    public int IdSoftware { get; set; }
+    protected SubscriptionOffer()
+    {
+    }
 
-    [Required]
-    [Column("Price", TypeName = "money")]
-    public decimal Price { get; set; }
-
-    [Required]
-    [ForeignKey(nameof(RenewalTime))]
-    public int IdRenewalTime { get; set; }
-
-    
-    public Software Software { get; set; }
-    public RenewalTime RenewalTime { get; set; }
-    public ICollection<Subscription> Subscriptions { get; set; }
+    public SubscriptionOffer(string name, decimal price, Software software, RenewalTime renewalTime)
+    {
+        Name = name;
+        Price = price;
+        Software = software;
+        RenewalTime = renewalTime;
+    }
 }

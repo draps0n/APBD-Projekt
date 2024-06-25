@@ -6,7 +6,9 @@ using APBD_Projekt.Exceptions;
 using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
 using APBD_Projekt.Repositories;
+using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.ResponseModels;
+using APBD_Projekt.Services.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace APBD_Projekt.Services;

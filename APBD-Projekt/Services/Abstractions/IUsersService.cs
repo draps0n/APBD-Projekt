@@ -1,6 +1,6 @@
 ﻿using APBD_Projekt.ResponseModels;
 
-namespace APBD_Projekt.Services;
+namespace APBD_Projekt.Services.Abstractions;
 
 public interface IUsersService
 {

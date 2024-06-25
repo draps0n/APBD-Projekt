@@ -1,22 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace APBD_Projekt.Models;
+﻿namespace APBD_Projekt.Models;
 
 public class SoftwareVersion
 {
-    [Key]
-    public int IdSoftwareVersion { get; set; }
+    public int IdSoftwareVersion { get; private set; }
+    public int IdSoftware { get; private set; }
+    public string Version { get; private set; }
 
-    [Required]
-    [ForeignKey(nameof(Software))]
-    public int IdSoftware { get; set; }
-
-    [Required]
-    [MaxLength(30)]
-    public string Version { get; set; }
-    
-    
-    public Software Software { get; set; }
-    public ICollection<Contract> Contracts { get; set; }
+    public Software Software { get; private set; }
+    public ICollection<Contract> Contracts { get; private set; }
 }

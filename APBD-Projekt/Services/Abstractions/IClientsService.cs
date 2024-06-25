@@ -1,6 +1,6 @@
 ﻿using APBD_Projekt.RequestModels;
 
-namespace APBD_Projekt.Services;
+namespace APBD_Projekt.Services.Abstractions;
 
 public interface IClientsService
 {

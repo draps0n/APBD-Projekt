@@ -1,19 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace APBD_Projekt.Models;
+﻿namespace APBD_Projekt.Models;
 
 public class RenewalTime
 {
-    [Key]
-    public int IdRenewalTime { get; set; }
+    public int IdRenewalTime { get; private set; }
+    public int Months { get; private set; }
+    public int Years { get; private set; }
 
-    [Required]
-    public int Months { get; set; }
+    public ICollection<SubscriptionOffer> SubscriptionOffers { get; private set; }
 
-    [Required]
-    public int Years { get; set; }
+    protected RenewalTime()
+    {
+    }
 
-    
-    public ICollection<SubscriptionOffer> SubscriptionOffers { get; set; }
+    public RenewalTime(int months, int years)
+    {
+        Months = months;
+        Years = years;
+    }
 }

@@ -7,24 +7,20 @@ namespace APBD_Projekt.Models;
 
 public class IndividualClient : Client
 {
-    [Required]
-    [MaxLength(50)]
     public string Name { get; private set; }
 
-    [Required]
-    [MaxLength(50)]
     public string LastName { get; private set; }
 
-    [Required]
-    [MaxLength(11)]
     public string PESEL { get; private set; }
-    
-    [Required]
+
     public bool IsDeleted { get; private set; }
 
-    protected IndividualClient() { }
+    protected IndividualClient()
+    {
+    }
 
-    public IndividualClient(string address, string email, string phone, string name, string lastName, string pesel) : base(address, email, phone)
+    public IndividualClient(string address, string email, string phone, string name, string lastName, string pesel) :
+        base(address, email, phone)
     {
         Name = name;
         LastName = lastName;

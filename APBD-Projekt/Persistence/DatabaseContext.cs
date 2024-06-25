@@ -1,7 +1,7 @@
 ﻿using APBD_Projekt.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace APBD_Projekt.Context;
+namespace APBD_Projekt.Persistence;
 
 public class DatabaseContext : DbContext
 {
@@ -27,5 +27,12 @@ public class DatabaseContext : DbContext
 
     public DatabaseContext(DbContextOptions options) : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DatabaseContext).Assembly);
     }
 }

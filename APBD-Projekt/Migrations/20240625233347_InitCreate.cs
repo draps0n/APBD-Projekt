@@ -38,7 +38,8 @@ namespace APBD_Projekt.Migrations
                     KRS = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    PESEL = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: true)
+                    PESEL = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -115,7 +116,7 @@ namespace APBD_Projekt.Migrations
                     Salt = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     IdRole = table.Column<int>(type: "int", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    RefreshTokenExp = table.Column<DateTime>(type: "datetime", nullable: true)
+                    RefreshTokenExp = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -212,7 +213,7 @@ namespace APBD_Projekt.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     YearsOfSupport = table.Column<int>(type: "int", nullable: false),
                     FinalPrice = table.Column<decimal>(type: "money", nullable: false),
-                    IdDiscount = table.Column<int>(type: "int", nullable: true)
+                    IdDiscount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -227,7 +228,8 @@ namespace APBD_Projekt.Migrations
                         name: "FK_Contracts_Discounts_IdDiscount",
                         column: x => x.IdDiscount,
                         principalTable: "Discounts",
-                        principalColumn: "IdDiscount");
+                        principalColumn: "IdDiscount",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Contracts_SoftwareVersions_IdSoftwareVersion",
                         column: x => x.IdSoftwareVersion,
@@ -375,6 +377,12 @@ namespace APBD_Projekt.Migrations
                 name: "IX_Users_IdRole",
                 table: "Users",
                 column: "IdRole");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Login",
+                table: "Users",
+                column: "Login",
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -1,38 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using APBD_Projekt.Enums;
 
 namespace APBD_Projekt.Models;
 
 public class Discount
 {
-    public static readonly int LicenseOnlyType = 0;
-    public static readonly int SubscriptionOnlyType = 1;
-    public static readonly int BothType = 2;
+    public int IdDiscount { get; private set; }
+    public string Name { get; private set; }
+    public DiscountType Type { get; private set; }
+    public int Percentage { get; private set; }
+    public DateTime StartDate { get; private set; }
+    public DateTime EndDate { get; private set; }
 
-    [Key]
-    public int IdDiscount { get; set; }
+    public ICollection<Contract> Contracts { get; private set; }
+    public ICollection<Subscription> Subscriptions { get; private set; }
 
-    [Required]
-    [MaxLength(250)]
-    public string Name { get; set; }
+    protected Discount()
+    {
+    }
 
-    [Required]
-    [Range(0, 2)]
-    public int Type { get; set; }
-
-    [Required]
-    [Range(1, 99)]
-    public int Percentage { get; set; }
-
-    [Required]
-    [Column("StartDate", TypeName = "datetime")]
-    public DateTime StartDate { get; set; }
-
-    [Required]
-    [Column("EndDate", TypeName = "datetime")]
-    public DateTime EndDate { get; set; }
-
-    
-    public ICollection<Contract> Contracts { get; set; }
-    public ICollection<Subscription> Subscriptions { get; set; }
+    public Discount(string name, DiscountType type, int percentage, DateTime startDate, DateTime endDate)
+    {
+        Name = name;
+        Type = type;
+        Percentage = percentage;
+        StartDate = startDate;
+        EndDate = endDate;
+    }
 }
