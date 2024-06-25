@@ -31,27 +31,6 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
         await usersRepository.RegisterUserAsync(user);
     }
 
-    private async Task<Role> GetOrAddStandardRoleAsync()
-    {
-        var standardUserRole = await usersRepository.GetRoleByNameAsync("standard");
-
-        if (standardUserRole is null)
-        {
-            standardUserRole = new Role("standard");
-            await usersRepository.CreateRoleAsync(standardUserRole);
-        }
-
-        return standardUserRole;
-    }
-
-    private async Task EnsureLoginIsUniqueAsync(string login)
-    {
-        if (await usersRepository.GetUserByLoginAsync(login) != null)
-        {
-            throw new BadRequestException($"User of {login} already exists");
-        }
-    }
-
     public async Task<LoginUserResponseModel> LoginUserAsync(string login, string password)
     {
         var user = await usersRepository.GetUserByLoginAsync(login);
@@ -120,5 +99,26 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
         );
 
         return token;
+    }
+
+    private async Task<Role> GetOrAddStandardRoleAsync()
+    {
+        var standardUserRole = await usersRepository.GetRoleByNameAsync("standard");
+
+        if (standardUserRole is null)
+        {
+            standardUserRole = new Role("standard");
+            await usersRepository.CreateRoleAsync(standardUserRole);
+        }
+
+        return standardUserRole;
+    }
+
+    private async Task EnsureLoginIsUniqueAsync(string login)
+    {
+        if (await usersRepository.GetUserByLoginAsync(login) != null)
+        {
+            throw new BadRequestException($"User of {login} already exists");
+        }
     }
 }

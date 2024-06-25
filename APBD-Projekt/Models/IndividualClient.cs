@@ -7,13 +7,22 @@ public class IndividualClient : Client
 {
     [Required]
     [MaxLength(50)]
-    public string Name { get; set; }
+    public string Name { get; private set; }
 
     [Required]
     [MaxLength(50)]
-    public string LastName { get; set; }
+    public string LastName { get; private set; }
 
     [Required]
     [MaxLength(11)]
-    public string PESEL { get; set; }
+    public string PESEL { get; private set; }
+
+    protected IndividualClient() { }
+
+    public IndividualClient(string address, string email, string phone, string name, string lastName, string pesel) : base(address, email, phone)
+    {
+        Name = name;
+        LastName = lastName;
+        PESEL = pesel;
+    }
 }
