@@ -34,11 +34,11 @@ public class DiscountEntityTypeConfiguration : IEntityTypeConfiguration<Discount
         builder.HasMany(d => d.Contracts)
             .WithOne(c => c.Discount)
             .HasForeignKey(c => c.IdDiscount)
-            .IsRequired();
+            .IsRequired(false);
         
         builder.HasMany(d => d.Subscriptions)
             .WithOne(sub => sub.Discount)
             .HasForeignKey(sub => sub.IdDiscount)
-            .IsRequired();
+            .IsRequired(false);
     }
 }
