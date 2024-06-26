@@ -15,4 +15,11 @@ public class SoftwareRepository(DatabaseContext context) : ISoftwareRepository
                 sv.Software.Name == softwareName && sv.Version == softwareVersion)
             .FirstOrDefaultAsync();
     }
+
+    public Task<Software?> GetSoftwareByIdAsync(int softwareId)
+    {
+        return context.Software
+            .Where(s => s.IdSoftware == softwareId)
+            .FirstOrDefaultAsync();
+    }
 }

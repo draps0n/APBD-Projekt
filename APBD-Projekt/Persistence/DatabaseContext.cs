@@ -19,7 +19,6 @@ public class DatabaseContext : DbContext
     public DbSet<SubscriptionPayment> SubscriptionPayments { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<SubscriptionOffer> SubscriptionOffers { get; set; }
-    public DbSet<RenewalTime> RenewalTimes { get; set; }
 
     protected DatabaseContext()
     {

@@ -20,14 +20,12 @@ public class SubscriptionOfferEntityTypeConfiguration : IEntityTypeConfiguration
             .HasColumnType("money")
             .IsRequired();
 
+        builder.Property(subOff => subOff.MonthsPerRenewalTime)
+            .IsRequired();
+
         builder.HasOne(subOff => subOff.Software)
             .WithMany(s => s.SubscriptionOffers)
             .HasForeignKey(subOff => subOff.IdSoftware)
-            .IsRequired();
-
-        builder.HasOne(subOff => subOff.RenewalTime)
-            .WithMany(rt => rt.SubscriptionOffers)
-            .HasForeignKey(subOff => subOff.IdRenewalTime)
             .IsRequired();
 
         builder.HasMany(subOff => subOff.Subscriptions)

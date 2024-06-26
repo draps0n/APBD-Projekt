@@ -67,6 +67,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 
         var token = GenerateJwtTokenForUser(user);
         user.UpdateRefreshToken();
+        await usersRepository.UpdateUserRefreshTokenAsync(user);
 
         return new RefreshTokenResponseModel
         {

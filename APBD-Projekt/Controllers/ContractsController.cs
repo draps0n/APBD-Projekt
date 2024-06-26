@@ -8,7 +8,7 @@ namespace APBD_Projekt.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("/api/clients/{clientId:int}/contracts")]
+[Route("/api/clients/{clientId:int}/[controller]")]
 public class ContractsController(IContractsService contractsService) : ControllerBase
 {
     [HttpPost]
@@ -44,7 +44,7 @@ public class ContractsController(IContractsService contractsService) : Controlle
         }
     }
 
-    [HttpPost("{contractId:int}/pay")]
+    [HttpPost("{contractId:int}/payments")]
     public async Task<IActionResult> PayForContractAsync(int clientId, int contractId,
         [FromBody] PayForContractRequestModel requestModel)
     {

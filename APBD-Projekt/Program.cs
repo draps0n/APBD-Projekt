@@ -53,6 +53,8 @@ builder.Services.AddScoped<IContractsRepository, ContractsRepository>();
 builder.Services.AddScoped<ISubscriptionsRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IDiscountsRepository, DiscountRepository>();
 builder.Services.AddScoped<ISoftwareRepository, SoftwareRepository>();
+builder.Services.AddScoped<IRevenueService, RevenueService>();
+builder.Services.AddHttpClient<ICurrencyService, CurrencyService>();
 
 SecurityHelpers.Configure(builder.Configuration);
 
