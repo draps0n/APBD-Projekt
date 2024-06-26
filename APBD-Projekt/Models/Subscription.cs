@@ -27,4 +27,9 @@ public class Subscription
         SubscriptionOffer = subscriptionOffer;
         Discount = discount;
     }
+
+    public bool IsActiveAndForGivenSoftware(int softwareId)
+    {
+        return SubscriptionOffer.IdSoftware == softwareId && EndDate == null;
+    }
 }

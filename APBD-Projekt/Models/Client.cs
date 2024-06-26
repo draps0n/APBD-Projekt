@@ -42,8 +42,7 @@ public abstract class Client
 
     public bool HasActiveSoftware(Software software)
     {
-        return Subscriptions.Any(sub =>
-                   sub.SubscriptionOffer.IdSoftware == software.IdSoftware && sub.EndDate == null) ||
+        return Subscriptions.Any(sub => sub.IsActiveAndForGivenSoftware(software.IdSoftware)) ||
                Contracts.Any(c => c.IsActiveAndForGivenSoftware(software.IdSoftware));
     }
 }
