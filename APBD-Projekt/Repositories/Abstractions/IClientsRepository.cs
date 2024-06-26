@@ -6,8 +6,9 @@ public interface IClientsRepository
 {
     Task AddIndividualClientAsync(IndividualClient individualClient);
     Task AddCompanyClientAsync(CompanyClient companyClient);
-    Task<CompanyClient?> GetClientByKRSAsync(string krs);
-    Task<IndividualClient?> GetClientByPESELAsync(string pesel);
+    Task<CompanyClient?> GetClientByKrsAsync(string krs);
+    Task<IndividualClient?> GetClientByPeselAsync(string pesel);
     Task<Client?> GetClientByIdAsync(int clientId);
     Task UpdateClientAsync(Client client);
+    Task<Client?> GetClientWithBoughtProductsAsync(int clientId);
 }

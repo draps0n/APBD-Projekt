@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using APBD_Projekt.Exceptions;
+﻿using APBD_Projekt.Exceptions;
 using APBD_Projekt.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,13 +20,14 @@ public class User
     {
     }
 
-    public User(string login, string password, string salt, string refreshToken, DateTime? refreshTokenExp, Role role)
+    public User(string login, string password, Role role)
     {
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
         Login = login;
-        Password = password;
-        Salt = salt;
-        RefreshToken = refreshToken;
-        RefreshTokenExp = refreshTokenExp;
+        Password = hashedPasswordAndSalt.Item1;
+        Salt = hashedPasswordAndSalt.Item2;
+        RefreshToken = SecurityHelpers.GenerateRefreshToken();
+        RefreshTokenExp = DateTime.Now.AddDays(1);
         Role = role;
     }
 

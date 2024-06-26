@@ -1,11 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Xml.Schema;
 using APBD_Projekt.Exceptions;
-using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
-using APBD_Projekt.Repositories;
 using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.ResponseModels;
 using APBD_Projekt.Services.Abstractions;
@@ -17,16 +14,12 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 {
     public async Task RegisterUserAsync(string login, string password)
     {
-        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
-        var standardUserRole = await GetOrAddStandardRoleAsync();
         await EnsureLoginIsUniqueAsync(login);
+        var standardUserRole = await GetOrAddStandardRoleAsync();
 
         var user = new User(
             login,
-            hashedPasswordAndSalt.Item1,
-            hashedPasswordAndSalt.Item2,
-            SecurityHelpers.GenerateRefreshToken(),
-            DateTime.Now.AddDays(1),
+            password,
             standardUserRole
         );
 

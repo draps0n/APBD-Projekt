@@ -1,7 +1,6 @@
 ﻿using APBD_Projekt.Enums;
 using APBD_Projekt.Exceptions;
 using APBD_Projekt.Models;
-using APBD_Projekt.Repositories;
 using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.RequestModels;
 using APBD_Projekt.Services.Abstractions;
@@ -92,7 +91,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
 
     private async Task EnsureKrsIsUnique(string krs)
     {
-        var client = await clientsRepository.GetClientByKRSAsync(krs);
+        var client = await clientsRepository.GetClientByKrsAsync(krs);
         if (client != null)
         {
             throw new BadRequestException($"Client with KRS {krs} already exists");
@@ -101,7 +100,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
 
     private async Task EnsurePeselIsUnique(string pesel)
     {
-        var client = await clientsRepository.GetClientByPESELAsync(pesel);
+        var client = await clientsRepository.GetClientByPeselAsync(pesel);
         if (client != null)
         {
             throw new BadRequestException($"Client with PESEL {pesel} already exists");

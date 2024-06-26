@@ -34,4 +34,18 @@ public abstract class Client
     }
 
     public abstract void EnsureIsOfType(ClientType clientType);
+
+    public bool IsPreviousClient()
+    {
+        return Subscriptions.Count > 1 || Contracts.Count(c => c.SignedAt != null) > 1;
+    }
+
+    public bool HasActiveSoftware(Software software)
+    {
+        return Subscriptions.Any(sub =>
+                   sub.SubscriptionOffer.IdSoftware == software.IdSoftware && sub.EndDate == null) ||
+               Contracts.Any(c =>
+                   c.SoftwareVersion.IdSoftware == software.IdSoftware && (c.SignedAt == null || (c.SignedAt != null &&
+                       c.SignedAt.Value.AddYears(c.YearsOfSupport) < DateTime.Now)));
+    }
 }

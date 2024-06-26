@@ -27,6 +27,10 @@ public class ContractEntityTypeConfiguration : IEntityTypeConfiguration<Contract
             .HasColumnType("money")
             .IsRequired();
 
+        builder.Property(c => c.SignedAt)
+            .HasColumnType("datetime")
+            .IsRequired(false);
+
         builder.HasOne(c => c.Client)
             .WithMany(cl => cl.Contracts)
             .HasForeignKey(c => c.IdClient)

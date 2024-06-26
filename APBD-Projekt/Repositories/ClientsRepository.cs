@@ -19,12 +19,12 @@ public class ClientsRepository(DatabaseContext context) : IClientsRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task<CompanyClient?> GetClientByKRSAsync(string krs)
+    public async Task<CompanyClient?> GetClientByKrsAsync(string krs)
     {
         return await context.CompanyClients.Where(c => c.KRS == krs).FirstOrDefaultAsync();
     }
 
-    public async Task<IndividualClient?> GetClientByPESELAsync(string pesel)
+    public async Task<IndividualClient?> GetClientByPeselAsync(string pesel)
     {
         return await context.IndividualClients.Where(c => c.PESEL == pesel).FirstOrDefaultAsync();
     }
@@ -37,5 +37,18 @@ public class ClientsRepository(DatabaseContext context) : IClientsRepository
     public async Task UpdateClientAsync(Client client)
     {
         await context.SaveChangesAsync();
+    }
+
+    public async Task<Client?> GetClientWithBoughtProductsAsync(int clientId)
+    {
+        return await context.Clients
+            .Include(cl => cl.Subscriptions)
+            .ThenInclude(sub => sub.SubscriptionOffer)
+            .ThenInclude(subOff => subOff.Software)
+            .Include(cl => cl.Contracts)
+            .ThenInclude(c => c.SoftwareVersion)
+            .ThenInclude(sv => sv.Software)
+            .Where(cl => cl.IdClient == clientId)
+            .FirstOrDefaultAsync();
     }
 }

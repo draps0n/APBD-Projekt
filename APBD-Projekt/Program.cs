@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "APBD-Projekt", Version = "v1" });
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -32,8 +32,8 @@ builder.Services.AddSwaggerGen(option =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -48,6 +48,11 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<IContractsService, ContractsService>();
+builder.Services.AddScoped<IContractsRepository, ContractsRepository>();
+builder.Services.AddScoped<ISubscriptionsRepository, SubscriptionRepository>();
+builder.Services.AddScoped<IDiscountsRepository, DiscountRepository>();
+builder.Services.AddScoped<ISoftwareRepository, SoftwareRepository>();
 
 SecurityHelpers.Configure(builder.Configuration);
 
@@ -76,6 +81,7 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Response.Headers.Add("Token-expired", "true");
             }
+
             return Task.CompletedTask;
         }
     };
