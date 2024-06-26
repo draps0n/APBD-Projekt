@@ -35,7 +35,7 @@ public abstract class Client
 
     public abstract void EnsureIsOfType(ClientType clientType);
 
-    public bool IsPreviousClient()
+    public bool IsRegularClient()
     {
         return Subscriptions.Count > 1 || Contracts.Count(c => c.SignedAt != null) > 1;
     }

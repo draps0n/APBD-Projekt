@@ -1,10 +1,11 @@
-﻿using APBD_Projekt.Persistence;
+﻿using APBD_Projekt.Models;
+using APBD_Projekt.Persistence;
 using APBD_Projekt.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace APBD_Projekt.Repositories;
 
-public class SubscriptionRepository(DatabaseContext context) : ISubscriptionsRepository
+public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRepository
 {
     public async Task<decimal> GetCurrentSubscriptionsRevenueAsync()
     {
@@ -42,5 +43,24 @@ public class SubscriptionRepository(DatabaseContext context) : ISubscriptionsRep
                               .AddMonths(sub.SubscriptionOffer.MonthsPerRenewalTime * sub.SubscriptionPayments.Count) <
                           DateTime.Now)
             .SumAsync(sub => sub.SubscriptionOffer.Price);
+    }
+
+    public async Task CreateSubscriptionAsync(Subscription subscription)
+    {
+        await context.Subscriptions.AddAsync(subscription);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<Subscription?> GetSubscriptionByIdAsync(int subscriptionId)
+    {
+        return await context.Subscriptions
+            .Include(sub => sub.SubscriptionOffer)
+            .Where(sub => sub.IdSubscription == subscriptionId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateSubscription(Subscription subscription)
+    {
+        await context.SaveChangesAsync();
     }
 }

@@ -64,20 +64,6 @@ namespace APBD_Projekt.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RenewalTimes",
-                columns: table => new
-                {
-                    IdRenewalTime = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Months = table.Column<int>(type: "int", nullable: false),
-                    Years = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RenewalTimes", x => x.IdRenewalTime);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -182,17 +168,11 @@ namespace APBD_Projekt.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IdSoftware = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "money", nullable: false),
-                    IdRenewalTime = table.Column<int>(type: "int", nullable: false)
+                    MonthsPerRenewalTime = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubscriptionOffers", x => x.IdSubscriptionOffer);
-                    table.ForeignKey(
-                        name: "FK_SubscriptionOffers_RenewalTimes_IdRenewalTime",
-                        column: x => x.IdRenewalTime,
-                        principalTable: "RenewalTimes",
-                        principalColumn: "IdRenewalTime",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SubscriptionOffers_Software_IdSoftware",
                         column: x => x.IdSoftware,
@@ -213,7 +193,8 @@ namespace APBD_Projekt.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     YearsOfSupport = table.Column<int>(type: "int", nullable: false),
                     FinalPrice = table.Column<decimal>(type: "money", nullable: false),
-                    IdDiscount = table.Column<int>(type: "int", nullable: false)
+                    IdDiscount = table.Column<int>(type: "int", nullable: true),
+                    SignedAt = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -228,8 +209,7 @@ namespace APBD_Projekt.Migrations
                         name: "FK_Contracts_Discounts_IdDiscount",
                         column: x => x.IdDiscount,
                         principalTable: "Discounts",
-                        principalColumn: "IdDiscount",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IdDiscount");
                     table.ForeignKey(
                         name: "FK_Contracts_SoftwareVersions_IdSoftwareVersion",
                         column: x => x.IdSoftwareVersion,
@@ -248,7 +228,9 @@ namespace APBD_Projekt.Migrations
                     IdSubscriptionOffer = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    IdDiscount = table.Column<int>(type: "int", nullable: true)
+                    IdDiscount = table.Column<int>(type: "int", nullable: true),
+                    NextPaymentDueDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    ShouldApplyRegularClientDiscount = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -344,11 +326,6 @@ namespace APBD_Projekt.Migrations
                 column: "IdSoftware");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubscriptionOffers_IdRenewalTime",
-                table: "SubscriptionOffers",
-                column: "IdRenewalTime");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SubscriptionOffers_IdSoftware",
                 table: "SubscriptionOffers",
                 column: "IdSoftware");
@@ -423,9 +400,6 @@ namespace APBD_Projekt.Migrations
 
             migrationBuilder.DropTable(
                 name: "SubscriptionOffers");
-
-            migrationBuilder.DropTable(
-                name: "RenewalTimes");
 
             migrationBuilder.DropTable(
                 name: "Software");

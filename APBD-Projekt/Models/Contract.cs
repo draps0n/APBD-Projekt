@@ -65,7 +65,7 @@ public class Contract
             finalPrice *= 1 - (decimal)discount.Percentage / 100;
         }
 
-        if (client.IsPreviousClient())
+        if (client.IsRegularClient())
         {
             finalPrice *= (decimal)0.95;
         }

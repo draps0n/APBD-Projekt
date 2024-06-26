@@ -261,6 +261,12 @@ namespace APBD_Projekt.Migrations
                     b.Property<int>("IdSubscriptionOffer")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("NextPaymentDueDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("ShouldApplyRegularClientDiscount")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime");
 

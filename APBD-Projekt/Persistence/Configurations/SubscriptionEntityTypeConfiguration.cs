@@ -19,6 +19,13 @@ public class SubscriptionEntityTypeConfiguration : IEntityTypeConfiguration<Subs
         builder.Property(sub => sub.EndDate)
             .HasColumnType("datetime");
 
+        builder.Property(sub => sub.ShouldApplyRegularClientDiscount)
+            .IsRequired();
+
+        builder.Property(sub => sub.NextPaymentDueDate)
+            .HasColumnType("datetime")
+            .IsRequired();
+
         builder.HasOne(sub => sub.Client)
             .WithMany(cl => cl.Subscriptions)
             .HasForeignKey(sub => sub.IdClient)

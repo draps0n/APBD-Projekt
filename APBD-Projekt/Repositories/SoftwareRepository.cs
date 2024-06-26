@@ -16,10 +16,19 @@ public class SoftwareRepository(DatabaseContext context) : ISoftwareRepository
             .FirstOrDefaultAsync();
     }
 
-    public Task<Software?> GetSoftwareByIdAsync(int softwareId)
+    public async Task<Software?> GetSoftwareByIdAsync(int softwareId)
     {
-        return context.Software
+        return await context.Software
             .Where(s => s.IdSoftware == softwareId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<SubscriptionOffer?> GetSoftwareSubscriptionOfferByNameAsync(string softwareName,
+        string subscriptionOfferName)
+    {
+        return await context.SubscriptionOffers
+            .Include(subOff => subOff.Software)
+            .Where(subOff => subOff.Name == subscriptionOfferName && subOff.Software.Name == softwareName)
             .FirstOrDefaultAsync();
     }
 }

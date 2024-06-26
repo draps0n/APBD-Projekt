@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APBD_Projekt.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240626121929_AddContractSignedAt")]
-    partial class AddContractSignedAt
+    [Migration("20240626223255_InitCreate")]
+    partial class InitCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,25 +177,6 @@ namespace APBD_Projekt.Migrations
                     b.ToTable("Discounts");
                 });
 
-            modelBuilder.Entity("APBD_Projekt.Models.RenewalTime", b =>
-                {
-                    b.Property<int>("IdRenewalTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRenewalTime"));
-
-                    b.Property<int>("Months")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Years")
-                        .HasColumnType("int");
-
-                    b.HasKey("IdRenewalTime");
-
-                    b.ToTable("RenewalTimes");
-                });
-
             modelBuilder.Entity("APBD_Projekt.Models.Role", b =>
                 {
                     b.Property<int>("IdRole")
@@ -283,6 +264,12 @@ namespace APBD_Projekt.Migrations
                     b.Property<int>("IdSubscriptionOffer")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("NextPaymentDueDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("ShouldApplyRegularClientDiscount")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime");
 
@@ -305,10 +292,10 @@ namespace APBD_Projekt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSubscriptionOffer"));
 
-                    b.Property<int>("IdRenewalTime")
+                    b.Property<int>("IdSoftware")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdSoftware")
+                    b.Property<int>("MonthsPerRenewalTime")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -320,8 +307,6 @@ namespace APBD_Projekt.Migrations
                         .HasColumnType("money");
 
                     b.HasKey("IdSubscriptionOffer");
-
-                    b.HasIndex("IdRenewalTime");
 
                     b.HasIndex("IdSoftware");
 
@@ -525,19 +510,11 @@ namespace APBD_Projekt.Migrations
 
             modelBuilder.Entity("APBD_Projekt.Models.SubscriptionOffer", b =>
                 {
-                    b.HasOne("APBD_Projekt.Models.RenewalTime", "RenewalTime")
-                        .WithMany("SubscriptionOffers")
-                        .HasForeignKey("IdRenewalTime")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("APBD_Projekt.Models.Software", "Software")
                         .WithMany("SubscriptionOffers")
                         .HasForeignKey("IdSoftware")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("RenewalTime");
 
                     b.Navigation("Software");
                 });
@@ -596,11 +573,6 @@ namespace APBD_Projekt.Migrations
                     b.Navigation("Contracts");
 
                     b.Navigation("Subscriptions");
-                });
-
-            modelBuilder.Entity("APBD_Projekt.Models.RenewalTime", b =>
-                {
-                    b.Navigation("SubscriptionOffers");
                 });
 
             modelBuilder.Entity("APBD_Projekt.Models.Role", b =>

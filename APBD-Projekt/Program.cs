@@ -50,10 +50,11 @@ builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
 builder.Services.AddScoped<IContractsService, ContractsService>();
 builder.Services.AddScoped<IContractsRepository, ContractsRepository>();
-builder.Services.AddScoped<ISubscriptionsRepository, SubscriptionRepository>();
-builder.Services.AddScoped<IDiscountsRepository, DiscountRepository>();
+builder.Services.AddScoped<ISubscriptionsRepository, SubscriptionsRepository>();
+builder.Services.AddScoped<IDiscountsRepository, DiscountsRepository>();
 builder.Services.AddScoped<ISoftwareRepository, SoftwareRepository>();
 builder.Services.AddScoped<IRevenueService, RevenueService>();
+builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddHttpClient<ICurrencyService, CurrencyService>();
 
 SecurityHelpers.Configure(builder.Configuration);
