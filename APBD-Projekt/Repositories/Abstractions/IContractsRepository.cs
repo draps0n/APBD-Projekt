@@ -5,5 +5,7 @@ namespace APBD_Projekt.Repositories.Abstractions;
 public interface IContractsRepository
 {
     Task AddNewContractAsync(Contract contract);
-    Task DeleteContractByIdAsync(int contractId);
+    Task<Contract?> GetContractByIdAsync(int contractId);
+    Task DeleteContractAsync(Contract contract);
+    Task RegisterPaymentAsync(ContractPayment payment);
 }

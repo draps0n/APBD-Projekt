@@ -13,8 +13,26 @@ public class ContractsRepository(DatabaseContext context) : IContractsRepository
         await context.SaveChangesAsync();
     }
 
-    public Task DeleteContractByIdAsync(int contractId)
+    public async Task<Contract?> GetContractByIdAsync(int contractId)
     {
-        throw new NotImplementedException();
+        return await context.Contracts
+            .Include(c => c.SoftwareVersion)
+            .ThenInclude(sv => sv.Software)
+            .Include(c => c.ContractPayments)
+            .Include(c => c.Client)
+            .Where(c => c.IdContract == contractId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task DeleteContractAsync(Contract contract)
+    {
+        context.Contracts.Remove(contract);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task RegisterPaymentAsync(ContractPayment payment)
+    {
+        await context.ContractPayments.AddAsync(payment);
+        await context.SaveChangesAsync();
     }
 }

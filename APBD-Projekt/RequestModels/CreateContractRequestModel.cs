@@ -5,9 +5,6 @@ namespace APBD_Projekt.RequestModels;
 public class CreateContractRequestModel
 {
     [Required]
-    public DateTime StartDate { get; set; }
-    
-    [Required]
     public DateTime EndDate { get; set; }
     
     [Range(0, 3)]

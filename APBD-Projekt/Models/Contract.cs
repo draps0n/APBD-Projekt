@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using APBD_Projekt.Exceptions;
+﻿using APBD_Projekt.Exceptions;
 
 namespace APBD_Projekt.Models;
 
@@ -89,5 +88,27 @@ public class Contract
         {
             throw new BadRequestException("Contract length must be between 3 and 30 days");
         }
+    }
+
+    public void ProcessPaymentAndSignIfPossible(decimal paymentAmount)
+    {
+        var alreadyPaid = ContractPayments.Sum(cp => cp.PaymentAmount);
+
+        if (alreadyPaid + paymentAmount > FinalPrice)
+        {
+            throw new BadRequestException($"Cannot pay more than it is left to pay: {FinalPrice - alreadyPaid}");
+        }
+
+        if (alreadyPaid + paymentAmount == FinalPrice)
+        {
+            SignedAt = DateTime.Now;
+        }
+    }
+
+    public bool IsActiveAndForGivenSoftware(int idSoftware)
+    {
+        return SoftwareVersion.IdSoftware == idSoftware && ((SignedAt == null && DateTime.Now < EndDate) ||
+                                                            (SignedAt != null &&
+                                                             SignedAt.Value.AddYears(YearsOfSupport) > DateTime.Now));
     }
 }

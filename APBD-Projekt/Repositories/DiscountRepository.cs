@@ -8,10 +8,11 @@ namespace APBD_Projekt.Repositories;
 
 public class DiscountRepository(DatabaseContext context) : IDiscountsRepository
 {
-    public async Task<Discount?> GetBestActiveDiscountForContract()
+    public async Task<Discount?> GetBestActiveDiscountForContract(DateTime startDate, DateTime endDate)
     {
         return await context.Discounts
-            .Where(d => d.Type == DiscountType.License || d.Type == DiscountType.Both)
+            .Where(d => (d.Type == DiscountType.License || d.Type == DiscountType.Both) && startDate > d.StartDate &&
+                        DateTime.Now < d.EndDate)
             .OrderByDescending(d => d.Percentage)
             .FirstOrDefaultAsync();
     }

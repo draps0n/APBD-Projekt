@@ -1,4 +1,6 @@
-﻿namespace APBD_Projekt.Models;
+﻿using APBD_Projekt.Exceptions;
+
+namespace APBD_Projekt.Models;
 
 public class ContractPayment
 {
@@ -13,10 +15,17 @@ public class ContractPayment
     {
     }
 
-    public ContractPayment(decimal paymentAmount, DateTime dateTime, Contract contract)
+    public ContractPayment(decimal paymentAmount, Contract contract)
     {
+        if (paymentAmount <= 0)
+        {
+            throw new BadRequestException("Payment amount must be >= 0");
+        }
+
+        contract.ProcessPaymentAndSignIfPossible(paymentAmount);
+
         PaymentAmount = paymentAmount;
-        DateTime = dateTime;
+        DateTime = contract.SignedAt != null ? contract.SignedAt!.Value : DateTime.Now;
         Contract = contract;
     }
 }

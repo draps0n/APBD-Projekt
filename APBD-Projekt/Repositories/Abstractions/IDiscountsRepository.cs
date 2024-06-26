@@ -4,5 +4,5 @@ namespace APBD_Projekt.Repositories.Abstractions;
 
 public interface IDiscountsRepository
 {
-    Task<Discount?> GetBestActiveDiscountForContract();
+    Task<Discount?> GetBestActiveDiscountForContract(DateTime startDate, DateTime endDate);
 }

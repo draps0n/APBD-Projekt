@@ -44,8 +44,6 @@ public abstract class Client
     {
         return Subscriptions.Any(sub =>
                    sub.SubscriptionOffer.IdSoftware == software.IdSoftware && sub.EndDate == null) ||
-               Contracts.Any(c =>
-                   c.SoftwareVersion.IdSoftware == software.IdSoftware && (c.SignedAt == null || (c.SignedAt != null &&
-                       c.SignedAt.Value.AddYears(c.YearsOfSupport) < DateTime.Now)));
+               Contracts.Any(c => c.IsActiveAndForGivenSoftware(software.IdSoftware));
     }
 }
