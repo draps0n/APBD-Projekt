@@ -10,5 +10,6 @@ public interface ISubscriptionsRepository
     Task<decimal> GetNotYetPaidSubscriptionsRevenueForSoftwareAsync(int softwareId);
     Task CreateSubscriptionAsync(Subscription subscription);
     Task<Subscription?> GetSubscriptionByIdAsync(int subscriptionId);
-    Task UpdateSubscriptionAsync(Subscription subscription);
+    void UpdateSubscription(Subscription subscription);
+    Task SaveChangesAsync();
 }

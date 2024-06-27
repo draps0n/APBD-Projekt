@@ -10,6 +10,10 @@ public class ContractsRepository(DatabaseContext context) : IContractsRepository
     public async Task AddNewContractAsync(Contract contract)
     {
         await context.Contracts.AddAsync(contract);
+    }
+
+    public async Task SaveChangesAsync()
+    {
         await context.SaveChangesAsync();
     }
 
@@ -24,16 +28,14 @@ public class ContractsRepository(DatabaseContext context) : IContractsRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task DeleteContractAsync(Contract contract)
+    public void DeleteContract(Contract contract)
     {
         context.Contracts.Remove(contract);
-        await context.SaveChangesAsync();
     }
 
     public async Task RegisterPaymentAsync(ContractPayment payment)
     {
         await context.ContractPayments.AddAsync(payment);
-        await context.SaveChangesAsync();
     }
 
     public async Task<decimal> GetCurrentContractsRevenueAsync()

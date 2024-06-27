@@ -9,6 +9,7 @@ public interface IClientsRepository
     Task<CompanyClient?> GetClientByKrsAsync(string krs);
     Task<IndividualClient?> GetClientByPeselAsync(string pesel);
     Task<Client?> GetClientByIdAsync(int clientId);
-    Task UpdateClientAsync(Client client);
+    void UpdateClient(Client client);
     Task<Client?> GetClientWithBoughtProductsAsync(int clientId);
+    Task SaveChangesAsync();
 }

@@ -44,7 +44,6 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
     public async Task CreateSubscriptionAsync(Subscription subscription)
     {
         await context.Subscriptions.AddAsync(subscription);
-        await context.SaveChangesAsync();
     }
 
     public async Task<Subscription?> GetSubscriptionByIdAsync(int subscriptionId)
@@ -55,7 +54,12 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
             .FirstOrDefaultAsync();
     }
 
-    public async Task UpdateSubscriptionAsync(Subscription subscription)
+    public void UpdateSubscription(Subscription subscription)
+    {
+        context.Subscriptions.Update(subscription);
+    }
+
+    public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();
     }

@@ -10,7 +10,6 @@ public class UsersRepository(DatabaseContext context) : IUsersRepository
     public async Task RegisterUserAsync(User user)
     {
         await context.Users.AddAsync(user);
-        await context.SaveChangesAsync();
     }
 
     public async Task<Role?> GetRoleByNameAsync(string roleName)
@@ -28,14 +27,18 @@ public class UsersRepository(DatabaseContext context) : IUsersRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task UpdateUserRefreshTokenAsync(User user)
+    public void UpdateUser(User user)
     {
-        await context.SaveChangesAsync();
+        context.Users.Update(user);
     }
 
     public async Task CreateRoleAsync(Role role)
     {
         await context.Roles.AddAsync(role);
+    }
+
+    public async Task SaveChangesAsync()
+    {
         await context.SaveChangesAsync();
     }
 }

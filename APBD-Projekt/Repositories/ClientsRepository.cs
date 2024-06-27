@@ -10,33 +10,37 @@ public class ClientsRepository(DatabaseContext context) : IClientsRepository
     public async Task AddIndividualClientAsync(IndividualClient individualClient)
     {
         await context.IndividualClients.AddAsync(individualClient);
-        await context.SaveChangesAsync();
     }
 
     public async Task AddCompanyClientAsync(CompanyClient companyClient)
     {
         await context.CompanyClients.AddAsync(companyClient);
-        await context.SaveChangesAsync();
     }
 
     public async Task<CompanyClient?> GetClientByKrsAsync(string krs)
     {
-        return await context.CompanyClients.Where(c => c.KRS == krs).FirstOrDefaultAsync();
+        return await context.CompanyClients
+            .Where(c => c.KRS == krs)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IndividualClient?> GetClientByPeselAsync(string pesel)
     {
-        return await context.IndividualClients.Where(c => c.PESEL == pesel).FirstOrDefaultAsync();
+        return await context.IndividualClients
+            .Where(c => c.PESEL == pesel)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<Client?> GetClientByIdAsync(int clientId)
     {
-        return await context.Clients.Where(c => c.IdClient == clientId).FirstOrDefaultAsync();
+        return await context.Clients
+            .Where(c => c.IdClient == clientId)
+            .FirstOrDefaultAsync();
     }
 
-    public async Task UpdateClientAsync(Client client)
+    public void UpdateClient(Client client)
     {
-        await context.SaveChangesAsync();
+        context.Clients.Update(client);
     }
 
     public async Task<Client?> GetClientWithBoughtProductsAsync(int clientId)
@@ -50,5 +54,10 @@ public class ClientsRepository(DatabaseContext context) : IClientsRepository
             .ThenInclude(sv => sv.Software)
             .Where(cl => cl.IdClient == clientId)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await context.SaveChangesAsync();
     }
 }

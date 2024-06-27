@@ -32,7 +32,8 @@ public class ContractsService(
             softwareVersion,
             discount);
 
-        await contractsRepository.AddNewContractAsync(contract); // TODO : unit of work
+        await contractsRepository.AddNewContractAsync(contract);
+        await contractsRepository.SaveChangesAsync();
         return new CreateContractResponseModel
         {
             ContractId = contract.IdContract,
@@ -72,6 +73,7 @@ public class ContractsService(
 
         var payment = new ContractPayment(amount, contract);
         await contractsRepository.RegisterPaymentAsync(payment);
+        await contractsRepository.SaveChangesAsync();
         return null;
     }
 
@@ -82,7 +84,8 @@ public class ContractsService(
 
         client.EnsureIsOwnerOfContract(contract);
 
-        await contractsRepository.DeleteContractAsync(contract);
+        contractsRepository.DeleteContract(contract);
+        await contractsRepository.SaveChangesAsync();
     }
 
     private async Task<Client> GetClientWithBoughtProductsAsync(int clientId)
@@ -150,6 +153,7 @@ public class ContractsService(
             discount);
 
         await contractsRepository.AddNewContractAsync(alternativeContract);
+        await contractsRepository.SaveChangesAsync();
         return alternativeContract;
     }
 }

@@ -28,7 +28,8 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         var client = await GetClientByIdAsync(clientId);
 
         client.Delete();
-        await clientsRepository.UpdateClientAsync(client); // TODO : uof
+        clientsRepository.UpdateClient(client);
+        await clientsRepository.SaveChangesAsync();
     }
 
     public async Task<UpdateClientResponseModel> UpdateClientByIdAsync(int clientId,
@@ -42,7 +43,8 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         client.EnsureIsOfType(clientType);
 
         client.Update(requestModel);
-        await clientsRepository.UpdateClientAsync(client); // TODO : uof
+        clientsRepository.UpdateClient(client);
+        await clientsRepository.SaveChangesAsync();
 
         return new UpdateClientResponseModel
         {
@@ -72,6 +74,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         );
 
         await clientsRepository.AddCompanyClientAsync(companyClient);
+        await clientsRepository.SaveChangesAsync();
         return new CreateClientResponseModel
         {
             IdClient = companyClient.IdClient,
@@ -97,6 +100,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         );
 
         await clientsRepository.AddIndividualClientAsync(individualClient);
+        await clientsRepository.SaveChangesAsync();
         return new CreateClientResponseModel
         {
             IdClient = individualClient.IdClient,

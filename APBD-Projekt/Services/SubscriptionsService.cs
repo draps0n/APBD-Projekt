@@ -23,6 +23,8 @@ public class SubscriptionsService(
 
         var subscription = new Subscription(startDate, client, subscriptionOffer, discount);
         await subscriptionsRepository.CreateSubscriptionAsync(subscription);
+        await subscriptionsRepository.SaveChangesAsync();
+
         return new CreateSubscriptionResponseModel
         {
             IdSubscription = subscription.IdSubscription,
@@ -32,7 +34,7 @@ public class SubscriptionsService(
             Fee = subscription.CalculateFee()
         };
     }
-    
+
     public async Task PayForSubscriptionAsync(int clientId, int subscriptionId,
         PayForSubscriptionRequestModel requestModel)
     {
@@ -41,7 +43,8 @@ public class SubscriptionsService(
         var subscription = await GetSubscriptionByIdAsync(subscriptionId);
 
         subscription.ProcessPayment(requestModel.Amount);
-        await subscriptionsRepository.UpdateSubscriptionAsync(subscription);
+        subscriptionsRepository.UpdateSubscription(subscription);
+        await subscriptionsRepository.SaveChangesAsync();
     }
 
     private async Task<SubscriptionOffer> GetSoftwareSubscriptionOfferByNameAsync(

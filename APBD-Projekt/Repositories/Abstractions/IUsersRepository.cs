@@ -7,6 +7,7 @@ public interface IUsersRepository
     Task RegisterUserAsync(User user);
     Task<Role?> GetRoleByNameAsync(string roleName);
     Task<User?> GetUserByLoginAsync(string login);
-    Task UpdateUserRefreshTokenAsync(User user);
+    void UpdateUser(User user);
     Task CreateRoleAsync(Role role);
+    Task SaveChangesAsync();
 }

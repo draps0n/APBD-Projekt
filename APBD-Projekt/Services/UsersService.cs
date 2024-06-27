@@ -24,19 +24,18 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
         );
 
         await usersRepository.RegisterUserAsync(user);
+        await usersRepository.SaveChangesAsync();
     }
 
     public async Task<LoginUserResponseModel> LoginUserAsync(string login, string password)
     {
         var user = await GetUserByLoginAsync(login);
-
         user.EnsurePasswordIsValid(password);
-
         var accessToken = GenerateJwtTokenForUser(user);
-        user.UpdateRefreshToken();
 
-        // TODO: unit of work pattern
-        await usersRepository.UpdateUserRefreshTokenAsync(user);
+        user.UpdateRefreshToken();
+        usersRepository.UpdateUser(user);
+        await usersRepository.SaveChangesAsync();
 
         return new LoginUserResponseModel
         {
@@ -48,12 +47,12 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
     public async Task<RefreshTokenResponseModel> RefreshUserTokenAsync(string? login, string refreshToken)
     {
         var user = await EnsureLoginIsValidAndGetUserByLoginAsync(login);
-
         user.EnsureUsersRefreshTokenMatchesAndIsValid(refreshToken);
 
         var token = GenerateJwtTokenForUser(user);
         user.UpdateRefreshToken();
-        await usersRepository.UpdateUserRefreshTokenAsync(user);
+        usersRepository.UpdateUser(user);
+        await usersRepository.SaveChangesAsync();
 
         return new RefreshTokenResponseModel
         {
@@ -121,6 +120,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 
         standardUserRole = new Role("standard");
         await usersRepository.CreateRoleAsync(standardUserRole);
+        await usersRepository.SaveChangesAsync();
 
         return standardUserRole;
     }
