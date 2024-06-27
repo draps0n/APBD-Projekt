@@ -12,53 +12,31 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
     public async Task CreateNewClientAsync(CreateClientRequestModel requestModel)
     {
         var clientType = GetClientTypeFromString(requestModel.ClientType);
-        EnsureCreateRequestModelIsValid(requestModel, clientType);
+        EnsureCreateClientRequestModelIsValid(requestModel, clientType);
 
         switch (clientType)
         {
             case ClientType.Individual:
             {
-                await EnsurePeselIsUnique(requestModel.PESEL!);
-                var individualClient = new IndividualClient(
-                    requestModel.Address,
-                    requestModel.Email,
-                    requestModel.Phone,
-                    requestModel.Name!,
-                    requestModel.LastName!,
-                    requestModel.PESEL!
-                );
-
-                await clientsRepository.AddIndividualClientAsync(individualClient);
+                await CreateIndividualClientAsync(requestModel);
                 break;
             }
             case ClientType.Company:
             {
-                await EnsureKrsIsUnique(requestModel.KRS!);
-
-                var companyClient = new CompanyClient(
-                    requestModel.Address,
-                    requestModel.Email,
-                    requestModel.Phone,
-                    requestModel.CompanyName!,
-                    requestModel.KRS!
-                );
-
-                await clientsRepository.AddCompanyClientAsync(companyClient);
+                await CreateCompanyClientAsync(requestModel);
                 break;
             }
+            default:
+                throw new BadRequestException($"Client type {clientType.ToString()} is not supported");
         }
     }
-    
+
     public async Task DeleteClientByIdAsync(int clientId)
     {
-        var client = await clientsRepository.GetClientByIdAsync(clientId);
-        if (client == null)
-        {
-            throw new NotFoundException($"Client with id: {clientId} does not exist");
-        }
+        var client = await GetClientByIdAsync(clientId);
 
         client.Delete();
-        await clientsRepository.UpdateClientAsync(client);
+        await clientsRepository.UpdateClientAsync(client); // TODO : uof
     }
 
     public async Task UpdateClientByIdAsync(int clientId, UpdateClientRequestModel requestModel)
@@ -66,18 +44,55 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         var clientType = GetClientTypeFromString(requestModel.ClientType);
         EnsureUpdateRequestModelIsValid(requestModel, clientType);
 
+        var client = await GetClientByIdAsync(clientId);
+
+        client.EnsureIsOfType(clientType);
+
+        client.Update(requestModel);
+        await clientsRepository.UpdateClientAsync(client); // TODO : uof
+    }
+
+    private async Task CreateCompanyClientAsync(CreateClientRequestModel requestModel)
+    {
+        await EnsureKrsIsUniqueAsync(requestModel.KRS!);
+
+        var companyClient = new CompanyClient(
+            requestModel.Address,
+            requestModel.Email,
+            requestModel.Phone,
+            requestModel.CompanyName!,
+            requestModel.KRS!
+        );
+
+        await clientsRepository.AddCompanyClientAsync(companyClient);
+    }
+
+    private async Task CreateIndividualClientAsync(CreateClientRequestModel requestModel)
+    {
+        await EnsurePeselIsUniqueAsync(requestModel.PESEL!);
+        var individualClient = new IndividualClient(
+            requestModel.Address,
+            requestModel.Email,
+            requestModel.Phone,
+            requestModel.Name!,
+            requestModel.LastName!,
+            requestModel.PESEL!
+        );
+
+        await clientsRepository.AddIndividualClientAsync(individualClient);
+    }
+
+    private async Task<Client> GetClientByIdAsync(int clientId)
+    {
         var client = await clientsRepository.GetClientByIdAsync(clientId);
         if (client == null)
         {
             throw new NotFoundException($"Client with id: {clientId} does not exist");
         }
 
-        client.EnsureIsOfType(clientType);
-
-        client.Update(requestModel);
-        await clientsRepository.UpdateClientAsync(client);
+        return client;
     }
-    
+
     private static ClientType GetClientTypeFromString(string clientTypeString)
     {
         if (!Enum.TryParse(clientTypeString, out ClientType clientType))
@@ -89,7 +104,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         return clientType;
     }
 
-    private async Task EnsureKrsIsUnique(string krs)
+    private async Task EnsureKrsIsUniqueAsync(string krs)
     {
         var client = await clientsRepository.GetClientByKrsAsync(krs);
         if (client != null)
@@ -98,7 +113,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         }
     }
 
-    private async Task EnsurePeselIsUnique(string pesel)
+    private async Task EnsurePeselIsUniqueAsync(string pesel)
     {
         var client = await clientsRepository.GetClientByPeselAsync(pesel);
         if (client != null)
@@ -107,12 +122,12 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         }
     }
 
-    private static void EnsureCreateRequestModelIsValid(CreateClientRequestModel model, ClientType clientType)
+    private static void EnsureCreateClientRequestModelIsValid(CreateClientRequestModel model, ClientType clientType)
     {
         if (!DoesMatchIndividualClient(model.Name, model.LastName, model.PESEL, clientType) &&
             !DoesMatchCompanyClient(model.CompanyName, model.KRS, clientType))
         {
-            throw new BadRequestException("Request model is invalid");
+            throw new BadRequestException($"Request model does not match given client type: {clientType}");
         }
     }
 
@@ -141,7 +156,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         if (!DoesMatchIndividualClient(model.Name, model.LastName, clientType) &&
             !DoesMatchCompanyClient(model.CompanyName, clientType))
         {
-            throw new BadRequestException("Request model is invalid");
+            throw new BadRequestException($"Request model does not match given client type: {clientType}");
         }
     }
 }

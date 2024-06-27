@@ -1,4 +1,5 @@
 ﻿using APBD_Projekt.Enums;
+using APBD_Projekt.Exceptions;
 using APBD_Projekt.RequestModels;
 
 namespace APBD_Projekt.Models;
@@ -44,5 +45,14 @@ public abstract class Client
     {
         return Subscriptions.Any(sub => sub.IsActiveAndForGivenSoftware(software.IdSoftware)) ||
                Contracts.Any(c => c.IsActiveAndForGivenSoftware(software.IdSoftware));
+    }
+
+    public void EnsureIsOwnerOfContract(Contract contract)
+    {
+        if (contract.IdClient != IdClient)
+        {
+            throw new BadRequestException(
+                $"Client: {IdClient} is not an owner of contract: {contract.IdContract}");
+        }
     }
 }

@@ -28,12 +28,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 
     public async Task<LoginUserResponseModel> LoginUserAsync(string login, string password)
     {
-        var user = await usersRepository.GetUserByLoginAsync(login);
-
-        if (user is null)
-        {
-            throw new UnauthorizedException("Invalid login or password");
-        }
+        var user = await GetUserByLoginAsync(login);
 
         user.EnsurePasswordIsValid(password);
 
@@ -52,16 +47,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 
     public async Task<RefreshTokenResponseModel> RefreshUserTokenAsync(string? login, string refreshToken)
     {
-        if (login is null)
-        {
-            throw new SecurityTokenException("Invalid access token");
-        }
-
-        var user = await usersRepository.GetUserByLoginAsync(login);
-        if (user is null)
-        {
-            throw new SecurityTokenException("Invalid access token");
-        }
+        var user = await EnsureLoginIsValidAndGetUserByLoginAsync(login);
 
         user.EnsureUsersRefreshTokenMatchesAndIsValid(refreshToken);
 
@@ -74,6 +60,33 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
             JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
             RefreshToken = user.RefreshToken
         };
+    }
+
+    private async Task<User> GetUserByLoginAsync(string login)
+    {
+        var user = await usersRepository.GetUserByLoginAsync(login);
+        if (user is null)
+        {
+            throw new UnauthorizedException("Invalid login or password");
+        }
+
+        return user;
+    }
+
+    private async Task<User> EnsureLoginIsValidAndGetUserByLoginAsync(string? login)
+    {
+        if (login is null)
+        {
+            throw new SecurityTokenException("Invalid access token");
+        }
+
+        var user = await usersRepository.GetUserByLoginAsync(login);
+        if (user is null)
+        {
+            throw new SecurityTokenException("Invalid access token");
+        }
+
+        return user;
     }
 
     private JwtSecurityToken GenerateJwtTokenForUser(User user)
@@ -101,11 +114,13 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
     {
         var standardUserRole = await usersRepository.GetRoleByNameAsync("standard");
 
-        if (standardUserRole is null)
+        if (standardUserRole is not null)
         {
-            standardUserRole = new Role("standard");
-            await usersRepository.CreateRoleAsync(standardUserRole);
+            return standardUserRole;
         }
+
+        standardUserRole = new Role("standard");
+        await usersRepository.CreateRoleAsync(standardUserRole);
 
         return standardUserRole;
     }

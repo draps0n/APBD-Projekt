@@ -111,4 +111,17 @@ public class Contract
                                                             (SignedAt != null &&
                                                              SignedAt.Value.AddYears(YearsOfSupport) > DateTime.Now));
     }
+
+    public void EnsureIsNotAlreadySigned()
+    {
+        if (SignedAt != null)
+        {
+            throw new BadRequestException("Cannot pay for contract already signed");
+        }
+    }
+
+    public bool IsActive()
+    {
+        return EndDate > DateTime.Now;
+    }
 }

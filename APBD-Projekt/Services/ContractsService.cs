@@ -16,24 +16,13 @@ public class ContractsService(
     public async Task<CreateContractResponseModel> CreateContractAsync(int clientId,
         CreateContractRequestModel requestModel)
     {
-        var client = await clientsRepository.GetClientWithBoughtProductsAsync(clientId);
-        if (client == null)
-        {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
-        }
+        var client = await GetClientWithBoughtProductsAsync(clientId);
 
         var startDate = DateTime.Now;
         var discount =
             await discountsRepository.GetBestActiveDiscountForContractAsync(startDate, requestModel.EndDate);
 
-        var softwareVersion = await softwareRepository.GetSoftwareVersionByNameAndVersionAsync(requestModel.SoftwareName,
-            requestModel.SoftwareVersion);
-
-        if (softwareVersion == null)
-        {
-            throw new NotFoundException(
-                $"Software {requestModel.SoftwareName} does not exist or have {requestModel.SoftwareVersion} version");
-        }
+        var softwareVersion = await GetSoftwareVersionByNameAndVersionAsync(requestModel);
 
         var contract = new Contract(
             startDate,
@@ -43,7 +32,7 @@ public class ContractsService(
             softwareVersion,
             discount);
 
-        await contractsRepository.AddNewContractAsync(contract);
+        await contractsRepository.AddNewContractAsync(contract); // TODO : unit of work
         return new CreateContractResponseModel
         {
             ContractId = contract.IdContract,
@@ -57,42 +46,15 @@ public class ContractsService(
         };
     }
 
-    public async Task DeleteContractByIdAsync(int clientId, int contractId)
-    {
-        var client = await clientsRepository.GetClientByIdAsync(clientId);
-        if (client == null)
-        {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
-        }
-
-        var contract = await contractsRepository.GetContractByIdAsync(contractId);
-        if (contract == null)
-        {
-            throw new NotFoundException($"Contract of id: {contractId} does not exist");
-        }
-
-        EnsureClientIsOwnerOfContract(client, contract);
-
-        await contractsRepository.DeleteContractAsync(contract);
-    }
-
     public async Task<CreateContractResponseModel?> PayForContractAsync(int clientId, int contractId, decimal amount)
     {
-        var client = await clientsRepository.GetClientByIdAsync(clientId);
-        if (client == null)
-        {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
-        }
+        var client = await GetClientByIdAsync(clientId);
+        var contract = await GetContractByIdAsync(contractId);
 
-        var contract = await contractsRepository.GetContractByIdAsync(contractId);
-        if (contract == null)
-        {
-            throw new NotFoundException($"Contract of id: {contractId} does not exist");
-        }
+        client.EnsureIsOwnerOfContract(contract);
+        contract.EnsureIsNotAlreadySigned();
 
-        EnsureClientIsOwnerOfContract(client, contract);
-        EnsureContractIsNotAlreadySigned(contract);
-        if (!CheckIfContractIsValid(contract))
+        if (!contract.IsActive())
         {
             var alternativeContract = await CreateAlternativeContract(contract);
             return new CreateContractResponseModel
@@ -113,9 +75,62 @@ public class ContractsService(
         return null;
     }
 
-    private static bool CheckIfContractIsValid(Contract contract)
+    public async Task DeleteContractByIdAsync(int clientId, int contractId)
     {
-        return contract.EndDate > DateTime.Now;
+        var client = await GetClientByIdAsync(clientId);
+        var contract = await GetContractByIdAsync(contractId);
+
+        client.EnsureIsOwnerOfContract(contract);
+
+        await contractsRepository.DeleteContractAsync(contract);
+    }
+
+    private async Task<Client> GetClientWithBoughtProductsAsync(int clientId)
+    {
+        var client = await clientsRepository.GetClientWithBoughtProductsAsync(clientId);
+        if (client == null)
+        {
+            throw new NotFoundException($"Client of id: {clientId} does not exist");
+        }
+
+        return client;
+    }
+
+    private async Task<SoftwareVersion> GetSoftwareVersionByNameAndVersionAsync(CreateContractRequestModel requestModel)
+    {
+        var softwareVersion = await softwareRepository.GetSoftwareVersionByNameAndVersionAsync(
+            requestModel.SoftwareName,
+            requestModel.SoftwareVersion);
+
+        if (softwareVersion == null)
+        {
+            throw new NotFoundException(
+                $"Software {requestModel.SoftwareName} does not exist or have {requestModel.SoftwareVersion} version");
+        }
+
+        return softwareVersion;
+    }
+
+    private async Task<Contract> GetContractByIdAsync(int contractId)
+    {
+        var contract = await contractsRepository.GetContractByIdAsync(contractId);
+        if (contract == null)
+        {
+            throw new NotFoundException($"Contract of id: {contractId} does not exist");
+        }
+
+        return contract;
+    }
+
+    private async Task<Client> GetClientByIdAsync(int clientId)
+    {
+        var client = await clientsRepository.GetClientByIdAsync(clientId);
+        if (client == null)
+        {
+            throw new NotFoundException($"Client of id: {clientId} does not exist");
+        }
+
+        return client;
     }
 
     private async Task<Contract> CreateAlternativeContract(Contract contract)
@@ -124,34 +139,17 @@ public class ContractsService(
         var endDate = startDate.AddDays(3);
         var discount =
             await discountsRepository.GetBestActiveDiscountForContractAsync(startDate, endDate);
-        var client = await clientsRepository.GetClientWithBoughtProductsAsync(contract.IdClient);
+        var client = await GetClientWithBoughtProductsAsync(contract.IdClient);
 
         var alternativeContract = new Contract(
             startDate,
             endDate,
             contract.YearsOfSupport - 1,
-            client!,
+            client,
             contract.SoftwareVersion,
             discount);
 
         await contractsRepository.AddNewContractAsync(alternativeContract);
         return alternativeContract;
-    }
-
-    private static void EnsureContractIsNotAlreadySigned(Contract contract)
-    {
-        if (contract.SignedAt != null)
-        {
-            throw new BadRequestException("Cannot pay for contract already signed");
-        }
-    }
-
-    private static void EnsureClientIsOwnerOfContract(Client client, Contract contract)
-    {
-        if (contract.IdClient != client.IdClient)
-        {
-            throw new BadRequestException(
-                $"Client: {client.IdClient} is not an owner of contract: {contract.IdContract}");
-        }
     }
 }
