@@ -1,11 +1,12 @@
 ﻿using APBD_Projekt.RequestModels;
+using APBD_Projekt.ResponseModels;
 
 namespace APBD_Projekt.Services.Abstractions;
 
 public interface IClientsService
 {
-    Task CreateNewClientAsync(CreateClientRequestModel requestModel);
+    Task<CreateClientResponseModel> CreateNewClientAsync(CreateClientRequestModel requestModel);
     Task DeleteClientByIdAsync(int clientId);
 
-    Task UpdateClientByIdAsync(int clientId, UpdateClientRequestModel requestModel);
+    Task<UpdateClientResponseModel> UpdateClientByIdAsync(int clientId, UpdateClientRequestModel requestModel);
 }

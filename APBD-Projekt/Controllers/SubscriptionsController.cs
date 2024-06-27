@@ -23,6 +23,6 @@ public class SubscriptionsController(ISubscriptionsService subscriptionsService)
         [FromBody] PayForSubscriptionRequestModel requestModel)
     {
         await subscriptionsService.PayForSubscriptionAsync(clientId, subscriptionId, requestModel);
-        return StatusCode(StatusCodes.Status201Created); 
+        return StatusCode(StatusCodes.Status201Created, "Successfully paid"); 
     }
 }

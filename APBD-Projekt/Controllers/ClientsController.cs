@@ -13,15 +13,15 @@ public class ClientsController(IClientsService clientsService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateClientAsync([FromBody] CreateClientRequestModel requestModel)
     {
-        await clientsService.CreateNewClientAsync(requestModel);
-        return StatusCode(StatusCodes.Status201Created);
+        var result = await clientsService.CreateNewClientAsync(requestModel);
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 
     [HttpPut("{clientId:int}")]
     public async Task<IActionResult> UpdateClientAsync(int clientId, [FromBody] UpdateClientRequestModel requestModel)
     {
         await clientsService.UpdateClientByIdAsync(clientId, requestModel);
-        return StatusCode(StatusCodes.Status204NoContent);
+        return StatusCode(StatusCodes.Status204NoContent, "Successfully deleted");
     }
 
     [HttpDelete("{clientId:int}")]

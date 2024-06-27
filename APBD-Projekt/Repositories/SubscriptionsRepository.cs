@@ -10,18 +10,14 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
     public async Task<decimal> GetCurrentSubscriptionsRevenueAsync()
     {
         return await context.SubscriptionPayments
-            .Include(subPay => subPay.Subscription)
-            .ThenInclude(sub => sub.SubscriptionOffer)
-            .SumAsync(subPay => subPay.Subscription.SubscriptionOffer.Price);
+            .SumAsync(subPay => subPay.Amount);
     }
 
     public async Task<decimal> GetCurrentSubscriptionsRevenueForSoftwareAsync(int softwareId)
     {
         return await context.SubscriptionPayments
-            .Include(subPay => subPay.Subscription)
-            .ThenInclude(sub => sub.SubscriptionOffer)
             .Where(subPay => subPay.Subscription.SubscriptionOffer.IdSoftware == softwareId)
-            .SumAsync(subPay => subPay.Subscription.SubscriptionOffer.Price);
+            .SumAsync(subPay => subPay.Amount);
     }
 
     public async Task<decimal> GetNotYetPaidSubscriptionsRevenueAsync()
@@ -32,7 +28,7 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
                               .AddMonths(sub.SubscriptionOffer.MonthsPerRenewalTime * sub.SubscriptionPayments.Count) <
                           DateTime.Now &&
                           sub.StartDate <= DateTime.Now)
-            .SumAsync(sub => sub.SubscriptionOffer.Price);
+            .SumAsync(sub => sub.SubscriptionOffer.Price * (decimal)(sub.ShouldApplyRegularClientDiscount ? 0.95 : 1));
     }
 
     public async Task<decimal> GetNotYetPaidSubscriptionsRevenueForSoftwareAsync(int softwareId)
@@ -42,7 +38,7 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
                           sub.StartDate
                               .AddMonths(sub.SubscriptionOffer.MonthsPerRenewalTime * sub.SubscriptionPayments.Count) <
                           DateTime.Now)
-            .SumAsync(sub => sub.SubscriptionOffer.Price);
+            .SumAsync(sub => sub.SubscriptionOffer.Price * (decimal)(sub.ShouldApplyRegularClientDiscount ? 0.95 : 1));
     }
 
     public async Task CreateSubscriptionAsync(Subscription subscription)

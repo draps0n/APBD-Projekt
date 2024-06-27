@@ -14,15 +14,15 @@ public class ContractsController(IContractsService contractsService) : Controlle
     public async Task<IActionResult> CreateNewContractAsync(int clientId,
         [FromBody] CreateContractRequestModel requestModel)
     {
-        await contractsService.CreateContractAsync(clientId, requestModel);
-        return StatusCode(StatusCodes.Status201Created);
+        var result = await contractsService.CreateContractAsync(clientId, requestModel);
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 
     [HttpDelete("{contractId:int}")]
     public async Task<IActionResult> DeleteContractAsync(int clientId, int contractId)
     {
         await contractsService.DeleteContractByIdAsync(clientId, contractId);
-        return StatusCode(StatusCodes.Status204NoContent);
+        return StatusCode(StatusCodes.Status204NoContent, "Successfully deleted");
     }
 
     [HttpPost("{contractId:int}/payments")]
@@ -30,11 +30,8 @@ public class ContractsController(IContractsService contractsService) : Controlle
         [FromBody] PayForContractRequestModel requestModel)
     {
         var result = await contractsService.PayForContractAsync(clientId, contractId, requestModel.Amount);
-        if (result == null)
-        {
-            return StatusCode(StatusCodes.Status201Created, "Payment successful");
-        }
-
-        return StatusCode(StatusCodes.Status201Created, result);
+        return result == null
+            ? StatusCode(StatusCodes.Status201Created, "Payment successful")
+            : StatusCode(StatusCodes.Status201Created, result);
     }
 }

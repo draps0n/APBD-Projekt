@@ -3,32 +3,24 @@ using APBD_Projekt.Exceptions;
 using APBD_Projekt.Models;
 using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.RequestModels;
+using APBD_Projekt.ResponseModels;
 using APBD_Projekt.Services.Abstractions;
 
 namespace APBD_Projekt.Services;
 
 public class ClientsService(IClientsRepository clientsRepository) : IClientsService
 {
-    public async Task CreateNewClientAsync(CreateClientRequestModel requestModel)
+    public async Task<CreateClientResponseModel> CreateNewClientAsync(CreateClientRequestModel requestModel)
     {
         var clientType = GetClientTypeFromString(requestModel.ClientType);
         EnsureCreateClientRequestModelIsValid(requestModel, clientType);
 
-        switch (clientType)
+        return clientType switch
         {
-            case ClientType.Individual:
-            {
-                await CreateIndividualClientAsync(requestModel);
-                break;
-            }
-            case ClientType.Company:
-            {
-                await CreateCompanyClientAsync(requestModel);
-                break;
-            }
-            default:
-                throw new BadRequestException($"Client type {clientType.ToString()} is not supported");
-        }
+            ClientType.Individual => await CreateIndividualClientAsync(requestModel),
+            ClientType.Company => await CreateCompanyClientAsync(requestModel),
+            _ => throw new BadRequestException($"Client type {clientType.ToString()} is not supported")
+        };
     }
 
     public async Task DeleteClientByIdAsync(int clientId)
@@ -39,7 +31,8 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         await clientsRepository.UpdateClientAsync(client); // TODO : uof
     }
 
-    public async Task UpdateClientByIdAsync(int clientId, UpdateClientRequestModel requestModel)
+    public async Task<UpdateClientResponseModel> UpdateClientByIdAsync(int clientId,
+        UpdateClientRequestModel requestModel)
     {
         var clientType = GetClientTypeFromString(requestModel.ClientType);
         EnsureUpdateRequestModelIsValid(requestModel, clientType);
@@ -50,9 +43,23 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
 
         client.Update(requestModel);
         await clientsRepository.UpdateClientAsync(client); // TODO : uof
+
+        return new UpdateClientResponseModel
+        {
+            IdClient = client.IdClient,
+            Address = client.Address,
+            ClientType = clientType.ToString(),
+            Email = client.Email,
+            Phone = client.Phone,
+            Name = clientType == ClientType.Individual ? ((IndividualClient)client).Name : null,
+            LastName = clientType == ClientType.Individual ? ((IndividualClient)client).LastName : null,
+            PESEL = clientType == ClientType.Individual ? ((IndividualClient)client).PESEL : null,
+            CompanyName = clientType == ClientType.Company ? ((CompanyClient)client).CompanyName : null,
+            KRS = clientType == ClientType.Company ? ((CompanyClient)client).KRS : null
+        };
     }
 
-    private async Task CreateCompanyClientAsync(CreateClientRequestModel requestModel)
+    private async Task<CreateClientResponseModel> CreateCompanyClientAsync(CreateClientRequestModel requestModel)
     {
         await EnsureKrsIsUniqueAsync(requestModel.KRS!);
 
@@ -65,9 +72,19 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         );
 
         await clientsRepository.AddCompanyClientAsync(companyClient);
+        return new CreateClientResponseModel
+        {
+            IdClient = companyClient.IdClient,
+            Address = companyClient.Address,
+            ClientType = requestModel.ClientType,
+            Email = companyClient.Email,
+            Phone = companyClient.Phone,
+            CompanyName = companyClient.CompanyName,
+            KRS = companyClient.KRS
+        };
     }
 
-    private async Task CreateIndividualClientAsync(CreateClientRequestModel requestModel)
+    private async Task<CreateClientResponseModel> CreateIndividualClientAsync(CreateClientRequestModel requestModel)
     {
         await EnsurePeselIsUniqueAsync(requestModel.PESEL!);
         var individualClient = new IndividualClient(
@@ -80,6 +97,17 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         );
 
         await clientsRepository.AddIndividualClientAsync(individualClient);
+        return new CreateClientResponseModel
+        {
+            IdClient = individualClient.IdClient,
+            Address = individualClient.Address,
+            ClientType = requestModel.ClientType,
+            Email = individualClient.Email,
+            Phone = individualClient.Phone,
+            Name = individualClient.Name,
+            LastName = individualClient.LastName,
+            PESEL = individualClient.PESEL
+        };
     }
 
     private async Task<Client> GetClientByIdAsync(int clientId)

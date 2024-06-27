@@ -16,6 +16,10 @@ public class SubscriptionPaymentEntityTypeConfiguration : IEntityTypeConfigurati
             .HasColumnType("datetime")
             .IsRequired();
 
+        builder.Property(subPay => subPay.Amount)
+            .HasColumnType("money")
+            .IsRequired();
+
         builder.HasOne(subPay => subPay.Subscription)
             .WithMany(sub => sub.SubscriptionPayments)
             .HasForeignKey(subPay => subPay.IdSubscription)

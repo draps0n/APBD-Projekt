@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using APBD_Projekt.Helpers;
 using APBD_Projekt.Middlewares;
 using APBD_Projekt.Persistence;
@@ -41,7 +42,10 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
 builder.Services.AddDbContext<DatabaseContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );

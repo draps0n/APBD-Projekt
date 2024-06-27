@@ -43,7 +43,13 @@ public class Subscription
 
     private void ProcessFirstPayment()
     {
-        var firstPayment = new SubscriptionPayment(StartDate, this);
+        var firstPaymentFee = CalculateFee();
+        if (Discount != null)
+        {
+            firstPaymentFee *= 1 - (decimal)Discount.Percentage / 100;
+        }
+
+        var firstPayment = new SubscriptionPayment(firstPaymentFee, StartDate, this);
         SubscriptionPayments.Add(firstPayment);
         NextPaymentDueDate = StartDate.AddMonths(SubscriptionOffer.MonthsPerRenewalTime * 2);
     }
@@ -92,7 +98,7 @@ public class Subscription
         EnsurePaymentIsNotAlreadyPaid();
         EnsurePaymentAmountIsValid(amount);
 
-        var payment = new SubscriptionPayment(DateTime.Now, this);
+        var payment = new SubscriptionPayment(CalculateFee(), DateTime.Now, this);
         SubscriptionPayments.Add(payment);
         NextPaymentDueDate = NextPaymentDueDate.AddMonths(SubscriptionOffer.MonthsPerRenewalTime);
     }
