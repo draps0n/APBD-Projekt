@@ -92,6 +92,7 @@ public class ContractsService(
         var contract = await GetContractByIdAsync(contractId);
 
         client.EnsureIsOwnerOfContract(contract);
+        contract.EnsureIsNotAlreadySigned();
 
         contractsRepository.DeleteContract(contract);
         await contractsRepository.SaveChangesAsync();
@@ -148,7 +149,7 @@ public class ContractsService(
     private async Task<Client> GetClientWithBoughtProductsAsync(int clientId)
     {
         var client = await clientsRepository.GetClientWithBoughtProductsAsync(clientId);
-        if (client == null)
+        if (client == null || client.WasDeleted())
         {
             throw new NotFoundException($"Client of id: {clientId} does not exist");
         }
@@ -185,7 +186,7 @@ public class ContractsService(
     private async Task<Client> GetClientByIdAsync(int clientId)
     {
         var client = await clientsRepository.GetClientByIdAsync(clientId);
-        if (client == null)
+        if (client == null || client.WasDeleted())
         {
             throw new NotFoundException($"Client of id: {clientId} does not exist");
         }

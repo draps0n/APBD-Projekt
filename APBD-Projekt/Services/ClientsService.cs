@@ -26,6 +26,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
     public async Task DeleteClientByIdAsync(int clientId)
     {
         var client = await GetClientByIdAsync(clientId);
+        
 
         client.Delete();
         clientsRepository.UpdateClient(client);
@@ -117,7 +118,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
     private async Task<Client> GetClientByIdAsync(int clientId)
     {
         var client = await clientsRepository.GetClientByIdAsync(clientId);
-        if (client == null)
+        if (client == null || client.WasDeleted())
         {
             throw new NotFoundException($"Client with id: {clientId} does not exist");
         }

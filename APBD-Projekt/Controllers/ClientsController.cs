@@ -18,6 +18,7 @@ public class ClientsController(IClientsService clientsService) : ControllerBase
     }
 
     [HttpPut("{clientId:int}")]
+    [Authorize(Policy = "AdminRequired")]
     public async Task<IActionResult> UpdateClientAsync(int clientId, [FromBody] UpdateClientRequestModel requestModel)
     {
         await clientsService.UpdateClientByIdAsync(clientId, requestModel);
@@ -25,6 +26,7 @@ public class ClientsController(IClientsService clientsService) : ControllerBase
     }
 
     [HttpDelete("{clientId:int}")]
+    [Authorize(Policy = "AdminRequired")]
     public async Task<IActionResult> DeleteClientAsync(int clientId)
     {
         await clientsService.DeleteClientByIdAsync(clientId);

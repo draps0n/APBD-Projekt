@@ -106,6 +106,9 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!))
     };
 });
+builder.Services
+    .AddAuthorizationBuilder()
+    .AddPolicy("AdminRequired", policy => policy.RequireRole("admin"));
 
 var app = builder.Build();
 

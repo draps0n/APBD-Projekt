@@ -39,6 +39,11 @@ public class IndividualClient : Client
         IsDeleted = true;
     }
 
+    public override bool WasDeleted()
+    {
+        return IsDeleted;
+    }
+
     public override void Update(UpdateClientRequestModel requestModel)
     {
         EnsureClientNotDeleted();

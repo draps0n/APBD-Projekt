@@ -62,7 +62,7 @@ public class Contract
     {
         if (SignedAt != null)
         {
-            throw new BadRequestException("Cannot pay for contract already signed");
+            throw new BadRequestException("Cannot delete/pay for contract already signed");
         }
     }
 

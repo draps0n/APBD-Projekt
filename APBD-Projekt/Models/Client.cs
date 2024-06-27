@@ -27,6 +27,11 @@ public abstract class Client
 
     public abstract void Delete();
 
+    public virtual bool WasDeleted()
+    {
+        return false;
+    }
+
     public virtual void Update(UpdateClientRequestModel requestModel)
     {
         Address = requestModel.Address;
