@@ -32,7 +32,7 @@ public class SubscriptionsService(
         }
 
         var startDate = DateTime.Now;
-        var discount = await discountsRepository.GetBestActiveDiscountForSubscription(startDate);
+        var discount = await discountsRepository.GetBestActiveDiscountForSubscriptionAsync(startDate);
 
         var subscription = new Subscription(startDate, client, subscriptionOffer, discount);
 
@@ -63,6 +63,6 @@ public class SubscriptionsService(
         }
         
         subscription.ProcessPayment(requestModel.Amount);
-        subscriptionsRepository.UpdateSubscription(subscription);
+        subscriptionsRepository.UpdateSubscriptionAsync(subscription);
     }
 }

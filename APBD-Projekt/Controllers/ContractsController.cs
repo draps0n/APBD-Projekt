@@ -1,5 +1,4 @@
-﻿using APBD_Projekt.Exceptions;
-using APBD_Projekt.RequestModels;
+﻿using APBD_Projekt.RequestModels;
 using APBD_Projekt.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,56 +14,27 @@ public class ContractsController(IContractsService contractsService) : Controlle
     public async Task<IActionResult> CreateNewContractAsync(int clientId,
         [FromBody] CreateContractRequestModel requestModel)
     {
-        try
-        {
-            await contractsService.CreateContractAsync(clientId, requestModel);
-            return StatusCode(StatusCodes.Status201Created);
-        }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
-        catch (BadRequestException e)
-        {
-            return BadRequest(e.Message);
-        }
+        await contractsService.CreateContractAsync(clientId, requestModel);
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpDelete("{contractId:int}")]
     public async Task<IActionResult> DeleteContractAsync(int clientId, int contractId)
     {
-        try
-        {
-            await contractsService.DeleteContractByIdAsync(clientId, contractId);
-            return StatusCode(StatusCodes.Status204NoContent);
-        }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
+        await contractsService.DeleteContractByIdAsync(clientId, contractId);
+        return StatusCode(StatusCodes.Status204NoContent);
     }
 
     [HttpPost("{contractId:int}/payments")]
     public async Task<IActionResult> PayForContractAsync(int clientId, int contractId,
         [FromBody] PayForContractRequestModel requestModel)
     {
-        try
+        var result = await contractsService.PayForContractAsync(clientId, contractId, requestModel.Amount);
+        if (result == null)
         {
-            var result = await contractsService.PayForContractAsync(clientId, contractId, requestModel.Amount);
-            if (result == null)
-            {
-                return StatusCode(StatusCodes.Status201Created, "Payment successful");
-            }
+            return StatusCode(StatusCodes.Status201Created, "Payment successful");
+        }
 
-            return StatusCode(StatusCodes.Status201Created, result);
-        }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
-        catch (BadRequestException e)
-        {
-            return BadRequest(e.Message);
-        }
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 }

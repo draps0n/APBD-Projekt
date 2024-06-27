@@ -15,7 +15,7 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
             .SumAsync(subPay => subPay.Subscription.SubscriptionOffer.Price);
     }
 
-    public async Task<decimal> GetCurrentSubscriptionsRevenueForSoftware(int softwareId)
+    public async Task<decimal> GetCurrentSubscriptionsRevenueForSoftwareAsync(int softwareId)
     {
         return await context.SubscriptionPayments
             .Include(subPay => subPay.Subscription)
@@ -59,7 +59,7 @@ public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRe
             .FirstOrDefaultAsync();
     }
 
-    public async Task UpdateSubscription(Subscription subscription)
+    public async Task UpdateSubscriptionAsync(Subscription subscription)
     {
         await context.SaveChangesAsync();
     }

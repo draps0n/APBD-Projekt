@@ -32,8 +32,8 @@ public class RevenueService(
     {
         await EnsureSoftwareExistsAsync(softwareId);
 
-        var contractsRevenue = await contractsRepository.GetCurrentContractsRevenueForSoftware(softwareId);
-        var subscriptionsRevenue = await subscriptionsRepository.GetCurrentSubscriptionsRevenueForSoftware(softwareId);
+        var contractsRevenue = await contractsRepository.GetCurrentContractsRevenueForSoftwareAsync(softwareId);
+        var subscriptionsRevenue = await subscriptionsRepository.GetCurrentSubscriptionsRevenueForSoftwareAsync(softwareId);
         var totalRevenue = contractsRevenue + subscriptionsRevenue;
 
         (currencyCode, totalRevenue) = await ConvertToDesiredCurrencyAsync(currencyCode, totalRevenue);
@@ -68,7 +68,7 @@ public class RevenueService(
 
         var contractsRevenue = await contractsRepository.GetForecastedContractsRevenueForSoftwareAsync(softwareId);
         var currentSubscriptionsRevenue =
-            await subscriptionsRepository.GetCurrentSubscriptionsRevenueForSoftware(softwareId);
+            await subscriptionsRepository.GetCurrentSubscriptionsRevenueForSoftwareAsync(softwareId);
         var notYetPaidSubscriptionsRevenue =
             await subscriptionsRepository.GetNotYetPaidSubscriptionsRevenueForSoftwareAsync(softwareId);
         var totalRevenue = contractsRevenue + currentSubscriptionsRevenue + notYetPaidSubscriptionsRevenue;

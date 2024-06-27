@@ -1,5 +1,6 @@
 using System.Text;
 using APBD_Projekt.Helpers;
+using APBD_Projekt.Middlewares;
 using APBD_Projekt.Persistence;
 using APBD_Projekt.Repositories;
 using APBD_Projekt.Repositories.Abstractions;
@@ -109,6 +110,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

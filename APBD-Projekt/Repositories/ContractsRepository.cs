@@ -43,7 +43,7 @@ public class ContractsRepository(DatabaseContext context) : IContractsRepository
             .SumAsync(c => c.FinalPrice);
     }
 
-    public async Task<decimal> GetCurrentContractsRevenueForSoftware(int softwareId)
+    public async Task<decimal> GetCurrentContractsRevenueForSoftwareAsync(int softwareId)
     {
         return await context.Contracts
             .Where(c => c.SignedAt != null && c.SoftwareVersion.IdSoftware == softwareId)

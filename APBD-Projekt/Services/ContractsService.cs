@@ -24,9 +24,9 @@ public class ContractsService(
 
         var startDate = DateTime.Now;
         var discount =
-            await discountsRepository.GetBestActiveDiscountForContract(startDate, requestModel.EndDate);
+            await discountsRepository.GetBestActiveDiscountForContractAsync(startDate, requestModel.EndDate);
 
-        var softwareVersion = await softwareRepository.GetSoftwareVersionByNameAndVersion(requestModel.SoftwareName,
+        var softwareVersion = await softwareRepository.GetSoftwareVersionByNameAndVersionAsync(requestModel.SoftwareName,
             requestModel.SoftwareVersion);
 
         if (softwareVersion == null)
@@ -123,7 +123,7 @@ public class ContractsService(
         var startDate = DateTime.Now;
         var endDate = startDate.AddDays(3);
         var discount =
-            await discountsRepository.GetBestActiveDiscountForContract(startDate, endDate);
+            await discountsRepository.GetBestActiveDiscountForContractAsync(startDate, endDate);
         var client = await clientsRepository.GetClientWithBoughtProductsAsync(contract.IdClient);
 
         var alternativeContract = new Contract(

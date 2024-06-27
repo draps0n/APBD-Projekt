@@ -7,7 +7,7 @@ namespace APBD_Projekt.Repositories;
 
 public class SoftwareRepository(DatabaseContext context) : ISoftwareRepository
 {
-    public async Task<SoftwareVersion?> GetSoftwareVersionByNameAndVersion(string softwareName, string softwareVersion)
+    public async Task<SoftwareVersion?> GetSoftwareVersionByNameAndVersionAsync(string softwareName, string softwareVersion)
     {
         return await context.SoftwareVersions
             .Include(sv => sv.Software)
