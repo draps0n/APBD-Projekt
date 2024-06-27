@@ -107,7 +107,6 @@ public class ContractTests
 
         // Act
         contract.ProcessPaymentAndSignIfPossible(100);
-        var signedAt = contract.SignedAt;
 
         // Act & Assert
         Assert.Throws<BadRequestException>(() => contract.EnsureIsNotAlreadySigned());

@@ -11,8 +11,8 @@ public class Discount
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
 
-    public ICollection<Contract> Contracts { get; private set; }
-    public ICollection<Subscription> Subscriptions { get; private set; }
+    public ICollection<Contract> Contracts { get; private set; } = [];
+    public ICollection<Subscription> Subscriptions { get; private set; } = [];
 
     protected Discount()
     {

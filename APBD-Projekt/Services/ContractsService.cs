@@ -200,8 +200,7 @@ public class ContractsService(
         var discount =
             await discountsRepository.GetBestActiveDiscountForContractAsync(startDate, endDate);
         var client = await GetClientWithBoughtProductsAsync(contract.IdClient);
-
-        EnsureContractTimespanIsValid(startDate, endDate);
+        
         client.EnsureHasNoActiveSoftware(contract.SoftwareVersion.Software);
         var finalPrice = ApplyAdditionalSupportCost(contract.YearsOfSupport, contract.SoftwareVersion);
         finalPrice = ApplyDiscounts(client, discount, finalPrice);

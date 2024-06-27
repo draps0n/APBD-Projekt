@@ -5,7 +5,7 @@ public class Role
     public int IdRole { get; private set; }
     public string Name { get; private set; }
 
-    public ICollection<User> Users { get; private set; }
+    public ICollection<User> Users { get; private set; } = [];
 
     protected Role()
     {

@@ -9,7 +9,7 @@ public class SubscriptionOffer
     public int MonthsPerRenewalTime { get; private set; }
 
     public Software Software { get; private set; }
-    public ICollection<Subscription> Subscriptions { get; private set; }
+    public ICollection<Subscription> Subscriptions { get; private set; } = [];
 
     protected SubscriptionOffer()
     {

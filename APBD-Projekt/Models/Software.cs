@@ -7,9 +7,9 @@ public class Software
     public string Description { get; private set; }
     public decimal YearlyLicensePrice { get; private set; }
 
-    public ICollection<Category> Categories { get; private set; }
-    public ICollection<SoftwareVersion> SoftwareVersions { get; private set; }
-    public ICollection<SubscriptionOffer> SubscriptionOffers { get; private set; }
+    public ICollection<Category> Categories { get; private set; } = [];
+    public ICollection<SoftwareVersion> SoftwareVersions { get; private set; } = [];
+    public ICollection<SubscriptionOffer> SubscriptionOffers { get; private set; } = [];
 
     protected Software()
     {
