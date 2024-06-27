@@ -36,7 +36,7 @@ namespace APBD_Projekt.Helpers
             return new Tuple<string, string>(hashed, saltBase64);
         }
 
-        public static string GetHashedPasswordWithSalt(string password, string salt)
+        public static string HashPasswordUsingSalt(string password, string salt)
         {
             var saltBytes = Convert.FromBase64String(salt);
 

@@ -41,10 +41,14 @@ public abstract class Client
         return Subscriptions.Count > 1 || Contracts.Count(c => c.SignedAt != null) > 1;
     }
 
-    public bool HasActiveSoftware(Software software)
+    public void EnsureHasNoActiveSoftware(Software software)
     {
-        return Subscriptions.Any(sub => sub.IsActiveAndForGivenSoftware(software.IdSoftware)) ||
-               Contracts.Any(c => c.IsActiveAndForGivenSoftware(software.IdSoftware));
+        if (Subscriptions.Any(sub => sub.IsActiveAndForGivenSoftware(software.IdSoftware)) ||
+            Contracts.Any(c => c.IsActiveAndForGivenSoftware(software.IdSoftware)))
+        {
+            throw new BadRequestException(
+                $"Client already has active subscription/license for software: {software.Name}");
+        }
     }
 
     public void EnsureIsOwnerOfContract(Contract contract)

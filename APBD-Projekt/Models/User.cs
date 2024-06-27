@@ -20,14 +20,14 @@ public class User
     {
     }
 
-    public User(string login, string password, Role role)
+    public User(string login, string hashedPassword, string salt, string refreshToken, DateTime? refreshTokenExp,
+        Role role)
     {
-        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
         Login = login;
-        Password = hashedPasswordAndSalt.Item1;
-        Salt = hashedPasswordAndSalt.Item2;
-        RefreshToken = SecurityHelpers.GenerateRefreshToken();
-        RefreshTokenExp = DateTime.Now.AddDays(1);
+        Password = hashedPassword;
+        Salt = salt;
+        RefreshToken = refreshToken;
+        RefreshTokenExp = refreshTokenExp;
         Role = role;
     }
 
@@ -53,7 +53,7 @@ public class User
 
     public void EnsurePasswordIsValid(string password)
     {
-        var givenPasswordHash = SecurityHelpers.GetHashedPasswordWithSalt(password, Salt);
+        var givenPasswordHash = SecurityHelpers.HashPasswordUsingSalt(password, Salt);
 
         if (givenPasswordHash != Password)
         {

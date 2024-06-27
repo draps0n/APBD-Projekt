@@ -21,7 +21,9 @@ public class SubscriptionsService(
         var startDate = DateTime.Now;
         var discount = await discountsRepository.GetBestActiveDiscountForSubscriptionAsync(startDate);
 
+        client.EnsureHasNoActiveSoftware(subscriptionOffer.Software);
         var subscription = new Subscription(startDate, client, subscriptionOffer, discount);
+        subscription.ProcessFirstPayment();
         await subscriptionsRepository.CreateSubscriptionAsync(subscription);
         await subscriptionsRepository.SaveChangesAsync();
 

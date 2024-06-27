@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using APBD_Projekt.Exceptions;
+using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
 using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.ResponseModels;
@@ -17,9 +18,15 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
         await EnsureLoginIsUniqueAsync(login);
         var standardUserRole = await GetOrAddStandardRoleAsync();
 
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var refreshTokenExp = DateTime.Now.AddDays(1);
         var user = new User(
             login,
-            password,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            refreshTokenExp,
             standardUserRole
         );
 

@@ -81,7 +81,17 @@ public class UsersServiceTests
         // Arrange
         const string login = "adam";
         const string password = "haslo123";
-        var fakeUsersRepository = new FakeUsersRepository([new User(login, "a", null!)], []);
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!
+        );
+        var fakeUsersRepository = new FakeUsersRepository([user], []);
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
         // Act & Assert
@@ -113,12 +123,24 @@ public class UsersServiceTests
         // Arrange
         const string login = "adam";
         const string password = "haslo123";
-        var fakeUsersRepository = new FakeUsersRepository([new User(login, "incorrectPassword", null!)], []);
+        const string incorrectPassword = "incorrectPassword";
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!
+        );
+
+        var fakeUsersRepository = new FakeUsersRepository([user], []);
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
         // Act & Assert
         var e = await Assert.ThrowsAsync<UnauthorizedException>(async () =>
-            await usersService.LoginUserAsync(login, password)
+            await usersService.LoginUserAsync(login, incorrectPassword)
         );
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -129,7 +151,16 @@ public class UsersServiceTests
         // Arrange
         const string login = "adam";
         const string password = "haslo123";
-        var user = new User(login, password, new Role(StandardRoleName));
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            new Role(StandardRoleName)
+        );
         var fakeUsersRepository = new FakeUsersRepository([user], []);
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
@@ -147,7 +178,16 @@ public class UsersServiceTests
         // Arrange
         const string login = "adam";
         const string password = "haslo123";
-        var user = new User(login, password, new Role(StandardRoleName));
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            new Role(StandardRoleName)
+        );
         var property = user.GetType().GetProperty("RefreshTokenExp",
             BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
         var fakeUsersRepository = new FakeUsersRepository([user], []);
@@ -171,17 +211,26 @@ public class UsersServiceTests
         // Arrange
         const string login = "adam";
         const string password = "haslo123";
-        const string userRefreshToken = "incorrectToken";
-        var user = new User(login, password, new Role(StandardRoleName));
+        const string incorrectToken = "incorrectToken";
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            new Role(StandardRoleName)
+        );
         var fakeUsersRepository = new FakeUsersRepository([user], []);
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
         // Act
-        var result = await usersService.LoginUserAsync(login, password);
+        await usersService.LoginUserAsync(login, password);
 
         // Act & Assert
         var e = await Assert.ThrowsAsync<SecurityTokenException>(async () =>
-            await usersService.RefreshUserTokenAsync(login, userRefreshToken)
+            await usersService.RefreshUserTokenAsync(login, incorrectToken)
         );
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -192,9 +241,16 @@ public class UsersServiceTests
         // Arrange
         const string login = "adam";
         const string password = "haslo123";
-        var user = new User(login, password, new Role(StandardRoleName));
-        var property = user.GetType().GetProperty("RefreshTokenExp",
-            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var user = new User(
+            login,
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            new Role(StandardRoleName)
+        );
         var fakeUsersRepository = new FakeUsersRepository([user], []);
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 

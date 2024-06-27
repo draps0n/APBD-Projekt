@@ -25,23 +25,15 @@ public class Subscription
     public Subscription(DateTime startDate, Client client, SubscriptionOffer subscriptionOffer,
         Discount? discount = null)
     {
-        if (client.HasActiveSoftware(subscriptionOffer.Software))
-        {
-            throw new BadRequestException(
-                $"Client already has active subscription/license for software: {subscriptionOffer.Software.Name}");
-        }
-
         ShouldApplyRegularClientDiscount = client.IsRegularClient();
         StartDate = startDate;
         Client = client;
         SubscriptionOffer = subscriptionOffer;
         Discount = discount;
         SubscriptionPayments = [];
-
-        ProcessFirstPayment();
     }
 
-    private void ProcessFirstPayment()
+    public void ProcessFirstPayment()
     {
         var firstPaymentFee = CalculateFee();
         if (Discount != null)

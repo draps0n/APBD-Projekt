@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using APBD_Projekt.Exceptions;
+using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
 using Microsoft.IdentityModel.Tokens;
 using Xunit.Abstractions;
@@ -12,8 +13,16 @@ public class UserTests(ITestOutputHelper testOutputHelper)
     public void UpdateRefreshToken_ShouldNotBeSameAsOld()
     {
         // Arrange
-        var user = new User("ala", "kot", null!);
-        var oldRefreshToken = user.RefreshToken;
+        const string password = "kot";
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var user = new User(
+            "ala",
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!);
 
         // Act
         user.UpdateRefreshToken();
@@ -21,18 +30,23 @@ public class UserTests(ITestOutputHelper testOutputHelper)
 
         // Assert
         Assert.NotNull(newRefreshToken);
-        Assert.NotEqual(oldRefreshToken, newRefreshToken);
+        Assert.NotEqual(refreshToken, newRefreshToken);
     }
 
     [Fact]
     public void EnsureUsersRefreshTokenMatchesAndIsValid_ShouldThrowSecurityTokenException_WhenTokenExpired()
     {
         // Arrange
-        var user = new User("ala", "kot", null!);
-        var refreshToken = user.RefreshToken;
-        var property = user.GetType().GetProperty("RefreshTokenExp",
-            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
-        property.SetValue(user, DateTime.Now.AddYears(-10));
+        const string password = "kot";
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var user = new User(
+            "ala",
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddYears(-10),
+            null!);
 
         // Act & Assert
         var e = Assert.Throws<SecurityTokenException>(() =>
@@ -44,8 +58,16 @@ public class UserTests(ITestOutputHelper testOutputHelper)
     public void EnsureUsersRefreshTokenMatchesAndIsValid_ShouldNotThrow_WhenTokenCorrect()
     {
         // Arrange
-        var user = new User("ala", "kot", null!);
-        var refreshToken = user.RefreshToken;
+        const string password = "kot";
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var user = new User(
+            "ala",
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!);
 
         // Act & Assert
         try
@@ -63,12 +85,21 @@ public class UserTests(ITestOutputHelper testOutputHelper)
     public void EnsureUsersRefreshTokenMatchesAndIsValid_ShouldThrowSecurityTokenException_WhenTokenIncorrect()
     {
         // Arrange
-        var user = new User("ala", "kot", null!);
-        const string refreshToken = "incorrectToken";
+        const string password = "kot";
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var user = new User(
+            "ala",
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!);
+        const string incorrectRefreshToken = "incorrectToken";
 
         // Act & Assert
         var e = Assert.Throws<SecurityTokenException>(() =>
-            user.EnsureUsersRefreshTokenMatchesAndIsValid(refreshToken));
+            user.EnsureUsersRefreshTokenMatchesAndIsValid(incorrectRefreshToken));
         testOutputHelper.WriteLine(e.Message);
     }
 
@@ -77,7 +108,37 @@ public class UserTests(ITestOutputHelper testOutputHelper)
     {
         // Arrange
         const string password = "kot";
-        var user = new User("ala", password, null!);
+        const string incorrectPassword = "incPass";
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var user = new User(
+            "ala",
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!);
+
+        // Act & Assert
+        var e = Assert.Throws<UnauthorizedException>(() =>
+            user.EnsurePasswordIsValid(incorrectPassword));
+        testOutputHelper.WriteLine(e.Message);
+    }
+
+    [Fact]
+    public void EnsurePasswordIsValid_ShouldNotThrowException_WhenPasswordIncorrect()
+    {
+        // Arrange
+        const string password = "kot";
+        var refreshToken = SecurityHelpers.GenerateRefreshToken();
+        var hashedPasswordAndSalt = SecurityHelpers.GetHashedPasswordAndSalt(password);
+        var user = new User(
+            "ala",
+            hashedPasswordAndSalt.Item1,
+            hashedPasswordAndSalt.Item2,
+            refreshToken,
+            DateTime.Now.AddDays(1),
+            null!);
 
         // Act & Assert
         try
@@ -89,17 +150,5 @@ public class UserTests(ITestOutputHelper testOutputHelper)
         {
             Assert.Fail(e.Message);
         }
-    }
-
-    [Fact]
-    public void EnsurePasswordIsValid_ShouldNotThrowException_WhenPasswordcorrect()
-    {
-        // Arrange
-        var user = new User("ala", "kot", null!);
-
-        // Act & Assert
-        var e = Assert.Throws<UnauthorizedException>(() =>
-            user.EnsurePasswordIsValid(user.Password));
-        testOutputHelper.WriteLine(e.Message);
     }
 }
