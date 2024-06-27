@@ -305,7 +305,7 @@ public class ClientsServiceTests
         client.Delete();
         
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
             await clientsService.UpdateClientByIdAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }

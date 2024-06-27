@@ -390,37 +390,6 @@ public class ClientTests
         Assert.NotEqual(oldName, individualClient.Name);
         Assert.NotEqual(oldLastName, individualClient.LastName);
     }
-    
-    [Fact]
-    public void Update_ShouldThrowExc_WhenIndividualClientIsDeleted()
-    {
-        // Arrange
-        var individualClient = new IndividualClient(
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-        );
-        var request = new UpdateClientRequestModel
-        {
-            Address = "a",
-            CompanyName = "a",
-            ClientType = "Individual",
-            Email = "a",
-            LastName = "a",
-            Name = "a",
-            Phone = "a"
-        };
-
-        // Act
-        individualClient.Delete();
-        
-        
-        // Act & Assert
-        Assert.Throws<BadRequestException>(() => individualClient.Update(request));
-    }
 
     [Fact]
     public void EnsureIsOfType_ShouldNotThrowExc_WhenMatching()

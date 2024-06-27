@@ -27,7 +27,6 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
     {
         var client = await GetClientByIdAsync(clientId);
         
-
         client.Delete();
         clientsRepository.UpdateClient(client);
         await clientsRepository.SaveChangesAsync();

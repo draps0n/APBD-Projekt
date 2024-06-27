@@ -46,18 +46,9 @@ public class IndividualClient : Client
 
     public override void Update(UpdateClientRequestModel requestModel)
     {
-        EnsureClientNotDeleted();
         base.Update(requestModel);
         Name = requestModel.Name!;
         LastName = requestModel.LastName!;
-    }
-
-    private void EnsureClientNotDeleted()
-    {
-        if (IsDeleted)
-        {
-            throw new BadRequestException("Cannot update deleted client");
-        }
     }
 
     public override void EnsureIsOfType(ClientType clientType)
