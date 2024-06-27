@@ -4,7 +4,7 @@ namespace APBD_Projekt.Repositories.Abstractions;
 
 public interface ISoftwareRepository
 {
-    Task<SoftwareVersion?> GetSoftwareVersionByNameAndVersionAsync(string softwareName, string softwareVersion);
+    Task<SoftwareVersion?> GetSoftwareVersionWithSoftwareByNameAndVersionAsync(string softwareName, string softwareVersion);
     Task<Software?> GetSoftwareByIdAsync(int softwareId);
-    Task<SubscriptionOffer?> GetSoftwareSubscriptionOfferByNameAsync(string softwareName, string subscriptionOfferName);
+    Task<SubscriptionOffer?> GetSoftwareSubscriptionOfferWithSoftwareByNameAsync(string softwareName, string subscriptionOfferName);
 }

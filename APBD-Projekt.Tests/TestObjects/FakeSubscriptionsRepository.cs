@@ -1,66 +1,65 @@
 ﻿using APBD_Projekt.Models;
-using APBD_Projekt.Persistence;
 using APBD_Projekt.Repositories.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
-namespace APBD_Projekt.Repositories;
+namespace APBD_Projekt.Tests.TestObjects;
 
-public class SubscriptionsRepository(DatabaseContext context) : ISubscriptionsRepository
+public class FakeSubscriptionsRepository(
+    List<Subscription> subscriptions,
+    List<SubscriptionPayment> subscriptionPayments) : ISubscriptionsRepository
 {
     public async Task<decimal> GetCurrentSubscriptionsRevenueAsync()
     {
-        return await context.SubscriptionPayments
-            .SumAsync(subPay => subPay.Amount);
+        return subscriptionPayments
+            .Sum(subPay => subPay.Amount);
     }
 
     public async Task<decimal> GetCurrentSubscriptionsRevenueForSoftwareAsync(int softwareId)
     {
-        return await context.SubscriptionPayments
+        return subscriptionPayments
             .Where(subPay => subPay.Subscription.SubscriptionOffer.IdSoftware == softwareId)
-            .SumAsync(subPay => subPay.Amount);
+            .Sum(subPay => subPay.Amount);
     }
 
     public async Task<decimal> GetNotYetPaidSubscriptionsRevenueAsync()
     {
-        return await context.Subscriptions
+        return subscriptions
             .Where(sub => sub.EndDate == null &&
                           sub.StartDate
                               .AddMonths(sub.SubscriptionOffer.MonthsPerRenewalTime * sub.SubscriptionPayments.Count) <
                           DateTime.Now &&
                           sub.StartDate <= DateTime.Now)
-            .SumAsync(sub => sub.SubscriptionOffer.Price * (decimal)(sub.ShouldApplyRegularClientDiscount ? 0.95 : 1));
+            .Sum(sub => sub.SubscriptionOffer.Price * (decimal)(sub.ShouldApplyRegularClientDiscount ? 0.95 : 1));
     }
 
     public async Task<decimal> GetNotYetPaidSubscriptionsRevenueForSoftwareAsync(int softwareId)
     {
-        return await context.Subscriptions
+        return subscriptions
             .Where(sub => sub.EndDate == null && sub.SubscriptionOffer.IdSoftware == softwareId &&
                           sub.StartDate
                               .AddMonths(sub.SubscriptionOffer.MonthsPerRenewalTime * sub.SubscriptionPayments.Count) <
                           DateTime.Now)
-            .SumAsync(sub => sub.SubscriptionOffer.Price * (decimal)(sub.ShouldApplyRegularClientDiscount ? 0.95 : 1));
+            .Sum(sub => sub.SubscriptionOffer.Price * (decimal)(sub.ShouldApplyRegularClientDiscount ? 0.95 : 1));
     }
 
     public async Task CreateSubscriptionAsync(Subscription subscription)
     {
-        await context.Subscriptions.AddAsync(subscription);
+        subscriptions.Add(subscription);
     }
 
     public async Task<Subscription?> GetSubscriptionWithOfferByIdAsync(int subscriptionId)
     {
-        return await context.Subscriptions
-            .Include(sub => sub.SubscriptionOffer)
-            .Where(sub => sub.IdSubscription == subscriptionId)
-            .FirstOrDefaultAsync();
+        return subscriptions
+            .FirstOrDefault(sub => sub.IdSubscription == subscriptionId);
     }
 
     public void UpdateSubscription(Subscription subscription)
     {
-        context.Subscriptions.Update(subscription);
+        var subscriptionInDb = subscriptions.FirstOrDefault(sub => sub.IdSubscription == subscription.IdSubscription)!;
+        subscriptions.Remove(subscriptionInDb);
+        subscriptions.Add(subscription);
     }
 
     public async Task SaveChangesAsync()
     {
-        await context.SaveChangesAsync();
     }
 }

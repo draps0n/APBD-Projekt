@@ -101,7 +101,7 @@ public class ContractsService(
 
     private async Task<SoftwareVersion> GetSoftwareVersionByNameAndVersionAsync(CreateContractRequestModel requestModel)
     {
-        var softwareVersion = await softwareRepository.GetSoftwareVersionByNameAndVersionAsync(
+        var softwareVersion = await softwareRepository.GetSoftwareVersionWithSoftwareByNameAndVersionAsync(
             requestModel.SoftwareName,
             requestModel.SoftwareVersion);
 
@@ -116,7 +116,7 @@ public class ContractsService(
 
     private async Task<Contract> GetContractByIdAsync(int contractId)
     {
-        var contract = await contractsRepository.GetContractByIdAsync(contractId);
+        var contract = await contractsRepository.GetContractWithSoftwareClientAndPaymentsByIdAsync(contractId);
         if (contract == null)
         {
             throw new NotFoundException($"Contract of id: {contractId} does not exist");

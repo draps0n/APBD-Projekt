@@ -51,7 +51,7 @@ public class SubscriptionsService(
         CreateSubscriptionRequestModel requestModel)
     {
         var subscriptionOffer =
-            await softwareRepository.GetSoftwareSubscriptionOfferByNameAsync(requestModel.SoftwareName,
+            await softwareRepository.GetSoftwareSubscriptionOfferWithSoftwareByNameAsync(requestModel.SoftwareName,
                 requestModel.SubscriptionOfferName);
         if (subscriptionOffer == null)
         {
@@ -75,7 +75,7 @@ public class SubscriptionsService(
 
     private async Task<Subscription> GetSubscriptionByIdAsync(int subscriptionId)
     {
-        var subscription = await subscriptionsRepository.GetSubscriptionByIdAsync(subscriptionId);
+        var subscription = await subscriptionsRepository.GetSubscriptionWithOfferByIdAsync(subscriptionId);
         if (subscription == null)
         {
             throw new NotFoundException($"Subscription of id: {subscriptionId} does not exist");
