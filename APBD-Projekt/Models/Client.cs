@@ -11,8 +11,8 @@ public abstract class Client
     public string Email { get; protected set; }
     public string Phone { get; protected set; }
 
-    public ICollection<Contract> Contracts { get; private set; }
-    public ICollection<Subscription> Subscriptions { get; private set; }
+    public ICollection<Contract> Contracts { get; private set; } = [];
+    public ICollection<Subscription> Subscriptions { get; private set; } = [];
 
     protected Client()
     {
@@ -38,7 +38,7 @@ public abstract class Client
 
     public bool IsRegularClient()
     {
-        return Subscriptions.Count > 1 || Contracts.Count(c => c.SignedAt != null) > 1;
+        return Subscriptions.Count >= 1 || Contracts.Any(c => c.SignedAt != null);
     }
 
     public void EnsureHasNoActiveSoftware(Software software)

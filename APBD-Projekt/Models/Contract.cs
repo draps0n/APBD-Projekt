@@ -17,7 +17,7 @@ public class Contract
     public Client Client { get; private set; }
     public SoftwareVersion SoftwareVersion { get; private set; }
     public Discount? Discount { get; private set; }
-    public ICollection<ContractPayment> ContractPayments { get; private set; }
+    public ICollection<ContractPayment> ContractPayments { get; private set; } = [];
 
     protected Contract()
     {
