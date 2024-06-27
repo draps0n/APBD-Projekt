@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 using APBD_Projekt.Exceptions;
@@ -73,7 +74,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
         var user = await usersRepository.GetUserWithRoleByLoginAsync(login);
         if (user is null)
         {
-            throw new UnauthorizedException("Invalid login or password");
+            throw new InvalidCredentialException("Invalid login or password");
         }
 
         return user;
@@ -136,7 +137,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
     {
         if (await usersRepository.GetUserWithRoleByLoginAsync(login) != null)
         {
-            throw new BadRequestException($"User of {login} already exists");
+            throw new NotUniqueIdentifierException($"User of {login} already exists");
         }
     }
 }

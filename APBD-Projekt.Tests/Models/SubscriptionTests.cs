@@ -75,7 +75,7 @@ public class SubscriptionTests
         subscription.ProcessFirstPayment();
 
         // Act & Assert
-        var e = Assert.Throws<BadRequestException>(() => subscription.ProcessPayment(10));
+        var e = Assert.Throws<PaymentException>(() => subscription.ProcessPayment(10));
         _testOutputHelper.WriteLine(e.Message);
         Assert.NotNull(subscription.EndDate);
     }
@@ -94,7 +94,7 @@ public class SubscriptionTests
         subscription.ProcessFirstPayment();
 
         // Act & Assert
-        var e = Assert.Throws<BadRequestException>(() => subscription.ProcessPayment(10));
+        var e = Assert.Throws<PaymentException>(() => subscription.ProcessPayment(10));
         _testOutputHelper.WriteLine(e.Message);
     }
 
@@ -112,7 +112,7 @@ public class SubscriptionTests
         subscription.ProcessFirstPayment();
 
         // Act & Assert
-        var e = Assert.Throws<BadRequestException>(() => subscription.ProcessPayment(10));
+        var e = Assert.Throws<PaymentException>(() => subscription.ProcessPayment(10));
         _testOutputHelper.WriteLine(e.Message);
     }
 

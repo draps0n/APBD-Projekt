@@ -1,12 +1,9 @@
-﻿using System.Reflection;
-using APBD_Projekt.Exceptions;
+﻿using APBD_Projekt.Exceptions;
 using APBD_Projekt.Models;
-using APBD_Projekt.Persistence;
 using APBD_Projekt.Repositories;
 using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.Services;
 using APBD_Projekt.Services.Abstractions;
-using APBD_Projekt.Tests.TestObjects;
 using Moq;
 using Xunit.Abstractions;
 
@@ -102,7 +99,7 @@ public class RevenueServiceTests
             softwareRepositoryMock.Object, _currencyService);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<SoftwareNotFoundException>(async () =>
             await revenueService.GetCurrentRevenueForSoftwareAsync(softwareId, ""));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -133,7 +130,7 @@ public class RevenueServiceTests
             softwareRepositoryMock.Object, _currencyService);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<SoftwareNotFoundException>(async () =>
             await revenueService.GetForecastedRevenueForSoftwareAsync(softwareId, ""));
         _testOutputHelper.WriteLine(e.Message);
     }

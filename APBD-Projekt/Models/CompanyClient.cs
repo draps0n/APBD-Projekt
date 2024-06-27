@@ -22,7 +22,7 @@ public class CompanyClient : Client
 
     public override void Delete()
     {
-        throw new BadRequestException("Company clients cannot be deleted");
+        throw new ClientTypeException("Company clients cannot be deleted");
     }
 
     public override void Update(UpdateClientRequestModel requestModel)
@@ -35,7 +35,7 @@ public class CompanyClient : Client
     {
         if (clientType != ClientType.Company)
         {
-            throw new BadRequestException($"Client of id: {IdClient} is a company client!");
+            throw new ClientTypeException($"Client of id: {IdClient} is a company client!");
         }
     }
 }

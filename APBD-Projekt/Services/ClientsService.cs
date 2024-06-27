@@ -19,7 +19,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         {
             ClientType.Individual => await CreateIndividualClientAsync(requestModel),
             ClientType.Company => await CreateCompanyClientAsync(requestModel),
-            _ => throw new BadRequestException($"Client type {clientType.ToString()} is not supported")
+            _ => throw new ClientTypeException($"Client type {clientType.ToString()} is not supported")
         };
     }
 
@@ -119,7 +119,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         var client = await clientsRepository.GetClientByIdAsync(clientId);
         if (client == null || client.WasDeleted())
         {
-            throw new NotFoundException($"Client with id: {clientId} does not exist");
+            throw new ClientNotFoundException($"Client with id: {clientId} does not exist");
         }
 
         return client;
@@ -129,7 +129,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
     {
         if (!Enum.TryParse(clientTypeString, out ClientType clientType))
         {
-            throw new BadRequestException(
+            throw new ClientTypeException(
                 $"Client type must be {ClientType.Company.ToString()} or {ClientType.Individual.ToString()}");
         }
 
@@ -141,7 +141,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         var client = await clientsRepository.GetClientByKrsAsync(krs);
         if (client != null)
         {
-            throw new BadRequestException($"Client with KRS {krs} already exists");
+            throw new NotUniqueIdentifierException($"Client with KRS {krs} already exists");
         }
     }
 
@@ -150,7 +150,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         var client = await clientsRepository.GetClientByPeselAsync(pesel);
         if (client != null)
         {
-            throw new BadRequestException($"Client with PESEL {pesel} already exists");
+            throw new NotUniqueIdentifierException($"Client with PESEL {pesel} already exists");
         }
     }
 
@@ -159,7 +159,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         if (!DoesMatchIndividualClient(model.Name, model.LastName, model.PESEL, clientType) &&
             !DoesMatchCompanyClient(model.CompanyName, model.KRS, clientType))
         {
-            throw new BadRequestException($"Request model does not match given client type: {clientType}");
+            throw new InvalidRequestFormatException($"Request model does not match given client type: {clientType}");
         }
     }
 
@@ -188,7 +188,7 @@ public class ClientsService(IClientsRepository clientsRepository) : IClientsServ
         if (!DoesMatchIndividualClient(model.Name, model.LastName, clientType) &&
             !DoesMatchCompanyClient(model.CompanyName, clientType))
         {
-            throw new BadRequestException($"Request model does not match given client type: {clientType}");
+            throw new InvalidRequestFormatException($"Request model does not match given client type: {clientType}");
         }
     }
 }

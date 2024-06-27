@@ -51,7 +51,7 @@ public abstract class Client
         if (Subscriptions.Any(sub => sub.IsActiveAndForGivenSoftware(software.IdSoftware)) ||
             Contracts.Any(c => c.IsActiveAndForGivenSoftware(software.IdSoftware)))
         {
-            throw new BadRequestException(
+            throw new InvalidRequestFormatException(
                 $"Client already has active subscription/license for software: {software.Name}");
         }
     }
@@ -60,7 +60,7 @@ public abstract class Client
     {
         if (contract.IdClient != IdClient)
         {
-            throw new BadRequestException(
+            throw new InvalidRequestFormatException(
                 $"Client: {IdClient} is not an owner of contract: {contract.IdContract}");
         }
     }

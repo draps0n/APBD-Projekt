@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using APBD_Projekt.Exceptions;
+using APBD_Projekt.Exceptions.Abstractions;
 using APBD_Projekt.Services.Abstractions;
 
 namespace APBD_Projekt.Services;
@@ -20,6 +21,6 @@ public class CurrencyService(HttpClient httpClient) : ICurrencyService
             return money * rate;
         }
 
-        throw new BadRequestException($"{currencyCode} is not supported");
+        throw new InvalidRequestFormatException($"{currencyCode} is not supported");
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using APBD_Projekt.Enums;
+﻿using APBD_Projekt.Enums;
 using APBD_Projekt.Exceptions;
 using APBD_Projekt.RequestModels;
 
@@ -55,7 +54,7 @@ public class IndividualClient : Client
     {
         if (clientType != ClientType.Individual)
         {
-            throw new BadRequestException($"Client of id: {IdClient} is a individual client!");
+            throw new ClientTypeException($"Client of id: {IdClient} is a individual client!");
         }
     }
 }

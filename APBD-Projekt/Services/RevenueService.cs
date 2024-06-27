@@ -1,4 +1,5 @@
 ﻿using APBD_Projekt.Exceptions;
+using APBD_Projekt.Exceptions.Abstractions;
 using APBD_Projekt.Repositories.Abstractions;
 using APBD_Projekt.ResponseModels;
 using APBD_Projekt.Services.Abstractions;
@@ -104,7 +105,7 @@ public class RevenueService(
 
         if (software == null)
         {
-            throw new NotFoundException($"Software of id: {softwareId} does not exist");
+            throw new SoftwareNotFoundException($"Software of id: {softwareId} does not exist");
         }
     }
 }

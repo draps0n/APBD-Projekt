@@ -1,4 +1,5 @@
-﻿using APBD_Projekt.Exceptions;
+﻿using System.Security.Authentication;
+using APBD_Projekt.Exceptions;
 using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
 using Microsoft.IdentityModel.Tokens;
@@ -119,7 +120,7 @@ public class UserTests(ITestOutputHelper testOutputHelper)
             null!);
 
         // Act & Assert
-        var e = Assert.Throws<UnauthorizedException>(() =>
+        var e = Assert.Throws<InvalidCredentialException>(() =>
             user.EnsurePasswordIsValid(incorrectPassword));
         testOutputHelper.WriteLine(e.Message);
     }

@@ -23,7 +23,7 @@ public class SubscriptionsServiceTests(ITestOutputHelper testOutputHelper)
         var subscriptionService = new SubscriptionsService(clientRepositoryMock.Object, null!, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await subscriptionService.CreateSubscriptionAsync(1, null!));
         testOutputHelper.WriteLine(e.Message);
     }
@@ -44,7 +44,7 @@ public class SubscriptionsServiceTests(ITestOutputHelper testOutputHelper)
             new SubscriptionsService(clientRepositoryMock.Object, null!, softwareRepositoryMock.Object, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<SoftwareNotFoundException>(async () =>
             await subscriptionService.CreateSubscriptionAsync(1,
                 new CreateSubscriptionRequestModel { SoftwareName = "sn", SubscriptionOfferName = "so" }));
         testOutputHelper.WriteLine(e.Message);
@@ -81,7 +81,7 @@ public class SubscriptionsServiceTests(ITestOutputHelper testOutputHelper)
                 discountRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidRequestFormatException>(async () =>
             await subscriptionService.CreateSubscriptionAsync(1,
                 new CreateSubscriptionRequestModel { SoftwareName = "sn", SubscriptionOfferName = "so" }));
         testOutputHelper.WriteLine(e.Message);
@@ -135,7 +135,7 @@ public class SubscriptionsServiceTests(ITestOutputHelper testOutputHelper)
         var subscriptionService = new SubscriptionsService(clientRepositoryMock.Object, null!, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await subscriptionService.PayForSubscriptionAsync(1, 0, new PayForSubscriptionRequestModel()));
         testOutputHelper.WriteLine(e.Message);
     }
@@ -158,7 +158,7 @@ public class SubscriptionsServiceTests(ITestOutputHelper testOutputHelper)
             new SubscriptionsService(clientRepositoryMock.Object, subscriptionRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<SubscriptionNotFoundException>(async () =>
             await subscriptionService.PayForSubscriptionAsync(1, 1, new PayForSubscriptionRequestModel()));
         testOutputHelper.WriteLine(e.Message);
     }
@@ -188,7 +188,7 @@ public class SubscriptionsServiceTests(ITestOutputHelper testOutputHelper)
             new SubscriptionsService(clientRepositoryMock.Object, subscriptionRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<PaymentException>(async () =>
             await subscriptionService.PayForSubscriptionAsync(1, 1,
                 new PayForSubscriptionRequestModel { Amount = 30 }));
         testOutputHelper.WriteLine(e.Message);

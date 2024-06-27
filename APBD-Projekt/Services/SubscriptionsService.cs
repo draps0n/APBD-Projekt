@@ -57,7 +57,7 @@ public class SubscriptionsService(
                 requestModel.SubscriptionOfferName);
         if (subscriptionOffer == null)
         {
-            throw new NotFoundException(
+            throw new SoftwareNotFoundException(
                 $"Subscription offer of name: {requestModel.SubscriptionOfferName} or software of name: {requestModel.SoftwareName} does not exist");
         }
 
@@ -69,7 +69,7 @@ public class SubscriptionsService(
         var client = await clientsRepository.GetClientWithBoughtProductsAsync(clientId);
         if (client == null || client.WasDeleted())
         {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
+            throw new ClientNotFoundException($"Client of id: {clientId} does not exist");
         }
 
         return client;
@@ -80,7 +80,7 @@ public class SubscriptionsService(
         var subscription = await subscriptionsRepository.GetSubscriptionWithOfferByIdAsync(subscriptionId);
         if (subscription == null)
         {
-            throw new NotFoundException($"Subscription of id: {subscriptionId} does not exist");
+            throw new SubscriptionNotFoundException($"Subscription of id: {subscriptionId} does not exist");
         }
 
         return subscription;
@@ -91,7 +91,7 @@ public class SubscriptionsService(
         var client = await clientsRepository.GetClientByIdAsync(clientId);
         if (client == null || client.WasDeleted())
         {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
+            throw new ClientNotFoundException($"Client of id: {clientId} does not exist");
         }
     }
 }

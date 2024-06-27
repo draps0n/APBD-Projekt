@@ -29,7 +29,7 @@ public class ContractsServiceTests
         var contractsService = new ContractsService(clientRepositoryMock.Object, null!, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await contractsService.CreateContractAsync(0, null!));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -61,7 +61,7 @@ public class ContractsServiceTests
             softwareRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<SoftwareNotFoundException>(async () =>
             await contractsService.CreateContractAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -96,7 +96,7 @@ public class ContractsServiceTests
             softwareRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidRequestFormatException>(async () =>
             await contractsService.CreateContractAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -139,7 +139,7 @@ public class ContractsServiceTests
             softwareRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidRequestFormatException>(async () =>
             await contractsService.CreateContractAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -304,7 +304,7 @@ public class ContractsServiceTests
             new ContractsService(clientRepositoryMock.Object, contractsRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ContractNotFoundException>(async () =>
             await contractsService.DeleteContractByIdAsync(0, 0));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -320,7 +320,7 @@ public class ContractsServiceTests
         var contractsService = new ContractsService(clientRepositoryMock.Object, null!, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await contractsService.DeleteContractByIdAsync(0, 0));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -345,7 +345,7 @@ public class ContractsServiceTests
             new ContractsService(clientRepositoryMock.Object, contractsRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidRequestFormatException>(async () =>
             await contractsService.DeleteContractByIdAsync(0, 0));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -391,7 +391,7 @@ public class ContractsServiceTests
             new ContractsService(clientRepositoryMock.Object, contractsRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await contractsService.PayForContractAsync(1, 1, 100m));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -414,7 +414,7 @@ public class ContractsServiceTests
             new ContractsService(clientRepositoryMock.Object, contractsRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ContractNotFoundException>(async () =>
             await contractsService.PayForContractAsync(1, 1, 100m));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -440,7 +440,7 @@ public class ContractsServiceTests
             new ContractsService(clientRepositoryMock.Object, contractsRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<ContractException>(async () =>
             await contractsService.PayForContractAsync(1, 1, 100m));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -465,7 +465,7 @@ public class ContractsServiceTests
             new ContractsService(clientRepositoryMock.Object, contractsRepositoryMock.Object, null!, null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<PaymentException>(async () =>
             await contractsService.PayForContractAsync(1, 1, -1m));
         _testOutputHelper.WriteLine(e.Message);
     }

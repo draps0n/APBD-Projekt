@@ -154,7 +154,7 @@ public class ClientTests
         typeof(Contract).GetProperty("IdClient")!.SetValue(contract, 0);
 
         // Act & Assert
-        var exc = Assert.Throws<BadRequestException>(() => client.EnsureIsOwnerOfContract(contract));
+        var exc = Assert.Throws<InvalidRequestFormatException>(() => client.EnsureIsOwnerOfContract(contract));
         _testOutputHelper.WriteLine(exc.Message);
     }
 
@@ -186,7 +186,7 @@ public class ClientTests
         typeof(Contract).GetProperty("SignedAt")!.SetValue(contract, DateTime.Now);
 
         // Act & Assert
-        var exc = Assert.Throws<BadRequestException>(() => client.EnsureHasNoActiveSoftware(software));
+        var exc = Assert.Throws<InvalidRequestFormatException>(() => client.EnsureHasNoActiveSoftware(software));
         _testOutputHelper.WriteLine(exc.Message);
     }
 
@@ -218,7 +218,7 @@ public class ClientTests
         client.Contracts.Add(contract);
 
         // Act & Assert
-        var exc = Assert.Throws<BadRequestException>(() => client.EnsureHasNoActiveSoftware(software));
+        var exc = Assert.Throws<InvalidRequestFormatException>(() => client.EnsureHasNoActiveSoftware(software));
         _testOutputHelper.WriteLine(exc.Message);
     }
 
@@ -246,7 +246,7 @@ public class ClientTests
         client.Subscriptions.Add(subscription);
 
         // Act & Assert
-        var exc = Assert.Throws<BadRequestException>(() => client.EnsureHasNoActiveSoftware(software));
+        var exc = Assert.Throws<InvalidRequestFormatException>(() => client.EnsureHasNoActiveSoftware(software));
         _testOutputHelper.WriteLine(exc.Message);
     }
 
@@ -311,7 +311,7 @@ public class ClientTests
         );
 
         // Act & Assert
-        var exc = Assert.Throws<BadRequestException>(() => companyClient.Delete());
+        var exc = Assert.Throws<ClientTypeException>(() => companyClient.Delete());
         _testOutputHelper.WriteLine(exc.Message);
     }
     
@@ -444,7 +444,7 @@ public class ClientTests
         );
         
         // Act & Assert
-        Assert.Throws<BadRequestException>(() => individualClient.EnsureIsOfType(ClientType.Company));
-        Assert.Throws<BadRequestException>(() => companyClient.EnsureIsOfType(ClientType.Individual));
+        Assert.Throws<ClientTypeException>(() => individualClient.EnsureIsOfType(ClientType.Company));
+        Assert.Throws<ClientTypeException>(() => companyClient.EnsureIsOfType(ClientType.Individual));
     }
 }

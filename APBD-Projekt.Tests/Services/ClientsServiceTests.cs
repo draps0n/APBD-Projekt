@@ -28,7 +28,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientTypeException>(async () =>
             await clientsService.CreateNewClientAsync(request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -44,7 +44,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidRequestFormatException>(async () =>
             await clientsService.CreateNewClientAsync(request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -70,7 +70,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(clientsRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<NotUniqueIdentifierException>(async () =>
             await clientsService.CreateNewClientAsync(request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -95,7 +95,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(clientsRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<NotUniqueIdentifierException>(async () =>
             await clientsService.CreateNewClientAsync(request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -173,7 +173,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(clientsRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await clientsService.DeleteClientByIdAsync(1));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -189,7 +189,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(clientsRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientTypeException>(async () =>
             await clientsService.DeleteClientByIdAsync(1));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -229,7 +229,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientTypeException>(async () =>
             await clientsService.UpdateClientByIdAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -250,7 +250,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(null!);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidRequestFormatException>(async () =>
             await clientsService.UpdateClientByIdAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -276,7 +276,7 @@ public class ClientsServiceTests
         var clientsService = new ClientsService(clientsRepositoryMock.Object);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientTypeException>(async () =>
             await clientsService.UpdateClientByIdAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }
@@ -305,7 +305,7 @@ public class ClientsServiceTests
         client.Delete();
         
         // Act & Assert
-        var e = await Assert.ThrowsAsync<NotFoundException>(async () =>
+        var e = await Assert.ThrowsAsync<ClientNotFoundException>(async () =>
             await clientsService.UpdateClientByIdAsync(1, request));
         _testOutputHelper.WriteLine(e.Message);
     }

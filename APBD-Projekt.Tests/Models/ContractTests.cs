@@ -19,7 +19,7 @@ public class ContractTests
         );
 
         // Act & Assert
-        Assert.Throws<BadRequestException>(() => contract.ProcessPaymentAndSignIfPossible(101));
+        Assert.Throws<PaymentException>(() => contract.ProcessPaymentAndSignIfPossible(101));
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class ContractTests
         contract.ProcessPaymentAndSignIfPossible(100);
 
         // Act & Assert
-        Assert.Throws<BadRequestException>(() => contract.EnsureIsNotAlreadySigned());
+        Assert.Throws<ContractException>(() => contract.EnsureIsNotAlreadySigned());
     }
     
     [Fact]

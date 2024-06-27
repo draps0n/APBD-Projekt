@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.Security.Authentication;
 using APBD_Projekt.Exceptions;
+using APBD_Projekt.Exceptions.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace APBD_Projekt.Middlewares;
@@ -22,14 +24,14 @@ public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandling
             logger.LogError(e, "Some of given resources could not be found");
             await HandleNotFoundExceptionAsync(context, e);
         }
-        catch (UnauthorizedException e)
+        catch (InvalidCredentialException e)
         {
             logger.LogError(e, "An error occured during authorization process");
             await HandleUnauthorizedExceptionAsync(context, e);
         }
         catch (SecurityTokenException e)
         {
-            logger.LogError(e, "An error occured during process token");
+            logger.LogError(e, "An error occured during processing your token");
             await HandleSecurityTokenExceptionAsync(context, e);
         }
         catch (Exception e)

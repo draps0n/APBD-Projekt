@@ -42,7 +42,7 @@ public class Contract
 
         if (alreadyPaid + paymentAmount > FinalPrice)
         {
-            throw new BadRequestException($"Cannot pay more than it is left to pay: {FinalPrice - alreadyPaid}");
+            throw new PaymentException($"Cannot pay more than it is left to pay: {FinalPrice - alreadyPaid}");
         }
 
         if (alreadyPaid + paymentAmount == FinalPrice)
@@ -62,7 +62,7 @@ public class Contract
     {
         if (SignedAt != null)
         {
-            throw new BadRequestException("Cannot delete/pay for contract already signed");
+            throw new ContractException("Cannot delete/pay for contract already signed");
         }
     }
 

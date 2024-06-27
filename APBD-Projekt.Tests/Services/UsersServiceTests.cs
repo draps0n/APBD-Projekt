@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Authentication;
 using APBD_Projekt.Exceptions;
 using APBD_Projekt.Helpers;
 using APBD_Projekt.Models;
@@ -16,7 +17,6 @@ public class UsersServiceTests
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly IConfiguration _configurationMock;
     private const string StandardRoleName = "standard";
-    private const string AdminRoleName = "admin";
 
     public UsersServiceTests(ITestOutputHelper testOutputHelper)
     {
@@ -73,7 +73,7 @@ public class UsersServiceTests
     }
 
     [Fact]
-    public async Task RegisterUserAsync_ShouldThrowBadRequestException_WhenLoginNotUnique()
+    public async Task RegisterUserAsync_ShouldThrowExc_WhenLoginNotUnique()
     {
         // Arrange
         const string login = "adam";
@@ -92,7 +92,7 @@ public class UsersServiceTests
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<BadRequestException>(async () =>
+        var e = await Assert.ThrowsAsync<NotUniqueIdentifierException>(async () =>
             await usersService.RegisterUserAsync(login, password)
         );
         _testOutputHelper.WriteLine(e.Message);
@@ -108,7 +108,7 @@ public class UsersServiceTests
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<UnauthorizedException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidCredentialException>(async () =>
             await usersService.LoginUserAsync(login, password)
         );
         _testOutputHelper.WriteLine(e.Message);
@@ -136,7 +136,7 @@ public class UsersServiceTests
         var usersService = new UsersService(fakeUsersRepository, _configurationMock);
 
         // Act & Assert
-        var e = await Assert.ThrowsAsync<UnauthorizedException>(async () =>
+        var e = await Assert.ThrowsAsync<InvalidCredentialException>(async () =>
             await usersService.LoginUserAsync(login, incorrectPassword)
         );
         _testOutputHelper.WriteLine(e.Message);

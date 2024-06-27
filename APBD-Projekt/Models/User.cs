@@ -1,4 +1,4 @@
-﻿using APBD_Projekt.Exceptions;
+﻿using System.Security.Authentication;
 using APBD_Projekt.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
@@ -57,7 +57,7 @@ public class User
 
         if (givenPasswordHash != Password)
         {
-            throw new UnauthorizedException("Invalid login or password");
+            throw new InvalidCredentialException("Invalid login or password");
         }
     }
 }

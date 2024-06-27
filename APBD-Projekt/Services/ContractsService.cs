@@ -102,7 +102,7 @@ public class ContractsService(
     {
         if (amount <= 0)
         {
-            throw new BadRequestException("Payment amount must be >= 0");
+            throw new PaymentException("Payment amount must be >= 0");
         }
     }
 
@@ -142,7 +142,7 @@ public class ContractsService(
         var contractLengthInDays = endDate.Subtract(startDate).Days;
         if (contractLengthInDays < 3 || contractLengthInDays > 30)
         {
-            throw new BadRequestException("Contract length must be between 3 and 30 days");
+            throw new InvalidRequestFormatException("Contract length must be between 3 and 30 days");
         }
     }
 
@@ -151,7 +151,7 @@ public class ContractsService(
         var client = await clientsRepository.GetClientWithBoughtProductsAsync(clientId);
         if (client == null || client.WasDeleted())
         {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
+            throw new ClientNotFoundException($"Client of id: {clientId} does not exist");
         }
 
         return client;
@@ -165,7 +165,7 @@ public class ContractsService(
 
         if (softwareVersion == null)
         {
-            throw new NotFoundException(
+            throw new SoftwareNotFoundException(
                 $"Software {requestModel.SoftwareName} does not exist or have {requestModel.SoftwareVersion} version");
         }
 
@@ -177,7 +177,7 @@ public class ContractsService(
         var contract = await contractsRepository.GetContractWithSoftwareClientAndPaymentsByIdAsync(contractId);
         if (contract == null)
         {
-            throw new NotFoundException($"Contract of id: {contractId} does not exist");
+            throw new ContractNotFoundException($"Contract of id: {contractId} does not exist");
         }
 
         return contract;
@@ -188,7 +188,7 @@ public class ContractsService(
         var client = await clientsRepository.GetClientByIdAsync(clientId);
         if (client == null || client.WasDeleted())
         {
-            throw new NotFoundException($"Client of id: {clientId} does not exist");
+            throw new ClientNotFoundException($"Client of id: {clientId} does not exist");
         }
 
         return client;

@@ -64,7 +64,7 @@ public class Subscription
         }
 
         EndDate = DateTime.Now;
-        throw new BadRequestException(
+        throw new PaymentException(
             "Previous subscription fees were not paid on time. Subscription is cancelled");
     }
 
@@ -72,7 +72,7 @@ public class Subscription
     {
         if (DateTime.Now.AddMonths(SubscriptionOffer.MonthsPerRenewalTime) < NextPaymentDueDate)
         {
-            throw new BadRequestException("Current subscription period is already paid");
+            throw new PaymentException("Current subscription period is already paid");
         }
     }
 
@@ -80,7 +80,7 @@ public class Subscription
     {
         if (amount != CalculateFee())
         {
-            throw new BadRequestException($"Subscription fee equals: {CalculateFee()}. Exact amount has to be paid");
+            throw new PaymentException($"Subscription fee equals: {CalculateFee()}. Exact amount has to be paid");
         }
     }
 
