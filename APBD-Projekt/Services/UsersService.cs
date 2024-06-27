@@ -63,7 +63,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 
     private async Task<User> GetUserByLoginAsync(string login)
     {
-        var user = await usersRepository.GetUserByLoginAsync(login);
+        var user = await usersRepository.GetUserWithRoleByLoginAsync(login);
         if (user is null)
         {
             throw new UnauthorizedException("Invalid login or password");
@@ -79,7 +79,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
             throw new SecurityTokenException("Invalid access token");
         }
 
-        var user = await usersRepository.GetUserByLoginAsync(login);
+        var user = await usersRepository.GetUserWithRoleByLoginAsync(login);
         if (user is null)
         {
             throw new SecurityTokenException("Invalid access token");
@@ -127,7 +127,7 @@ public class UsersService(IUsersRepository usersRepository, IConfiguration confi
 
     private async Task EnsureLoginIsUniqueAsync(string login)
     {
-        if (await usersRepository.GetUserByLoginAsync(login) != null)
+        if (await usersRepository.GetUserWithRoleByLoginAsync(login) != null)
         {
             throw new BadRequestException($"User of {login} already exists");
         }

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using APBD_Projekt.Exceptions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace APBD_Projekt.Middlewares;
 
@@ -26,11 +27,34 @@ public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandling
             logger.LogError(e, "An error occured during authorization process");
             await HandleUnauthorizedExceptionAsync(context, e);
         }
+        catch (SecurityTokenException e)
+        {
+            logger.LogError(e, "An error occured during process token");
+            await HandleSecurityTokenExceptionAsync(context, e);
+        }
         catch (Exception e)
         {
             logger.LogError(e, "An unhandled exception occurred");
             await HandleOtherExceptionAsync(context);
         }
+    }
+
+    private static async Task HandleSecurityTokenExceptionAsync(HttpContext context, SecurityTokenException exception)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Response.ContentType = "application/json";
+
+        var response = new
+        {
+            error = new
+            {
+                message = "An error occured during processing your token",
+                detail = exception.Message
+            }
+        };
+
+        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
+        await context.Response.WriteAsync(jsonResponse);
     }
 
     private static async Task HandleNotFoundExceptionAsync(HttpContext context, Exception exception)

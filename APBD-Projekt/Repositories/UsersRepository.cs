@@ -19,7 +19,7 @@ public class UsersRepository(DatabaseContext context) : IUsersRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<User?> GetUserByLoginAsync(string login)
+    public async Task<User?> GetUserWithRoleByLoginAsync(string login)
     {
         return await context.Users
             .Include(u => u.Role)

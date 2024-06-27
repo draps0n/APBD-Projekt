@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APBD-Projekt", "APBD-Projekt\APBD-Projekt.csproj", "{28ADC299-B7B0-4C1C-ABD5-864BD981CB38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APBD-Projekt.Tests", "APBD-Projekt.Tests\APBD-Projekt.Tests.csproj", "{776DAA7E-34F9-4CE7-A70B-B91B7CA77DE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{28ADC299-B7B0-4C1C-ABD5-864BD981CB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28ADC299-B7B0-4C1C-ABD5-864BD981CB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28ADC299-B7B0-4C1C-ABD5-864BD981CB38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{776DAA7E-34F9-4CE7-A70B-B91B7CA77DE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{776DAA7E-34F9-4CE7-A70B-B91B7CA77DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{776DAA7E-34F9-4CE7-A70B-B91B7CA77DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{776DAA7E-34F9-4CE7-A70B-B91B7CA77DE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
