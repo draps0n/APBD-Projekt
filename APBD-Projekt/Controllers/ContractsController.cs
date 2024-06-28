@@ -29,9 +29,16 @@ public class ContractsController(IContractsService contractsService) : Controlle
     public async Task<IActionResult> PayForContractAsync(int clientId, int contractId,
         [FromBody] PayForContractRequestModel requestModel)
     {
-        var result = await contractsService.PayForContractAsync(clientId, contractId, requestModel.Amount);
-        return result == null
-            ? StatusCode(StatusCodes.Status201Created, "Payment successful")
-            : StatusCode(StatusCodes.Status201Created, result);
+        var (wasSigned, alternativeContract) =
+            await contractsService.PayForContractAsync(clientId, contractId, requestModel.Amount);
+
+        if (alternativeContract == null)
+        {
+            return StatusCode(StatusCodes.Status201Created,
+                "Payment successful" + (wasSigned ? ". Contract has been signed" : ""));
+        }
+
+        alternativeContract.Message = "Contract is not active. Here is a new offer";
+        return StatusCode(StatusCodes.Status201Created, alternativeContract);
     }
 }

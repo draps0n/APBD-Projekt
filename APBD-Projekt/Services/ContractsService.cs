@@ -53,7 +53,8 @@ public class ContractsService(
         };
     }
 
-    public async Task<CreateContractResponseModel?> PayForContractAsync(int clientId, int contractId, decimal amount)
+    public async Task<(bool, AlternativeContractResponseModel?)> PayForContractAsync(int clientId, int contractId,
+        decimal amount)
     {
         var client = await GetClientByIdAsync(clientId);
         var contract = await GetContractByIdAsync(contractId);
@@ -65,17 +66,18 @@ public class ContractsService(
         if (!contract.IsActive())
         {
             var alternativeContract = await CreateAlternativeContract(contract);
-            return new CreateContractResponseModel
-            {
-                ContractId = alternativeContract.IdContract,
-                ClientId = alternativeContract.IdClient,
-                FinalPrice = alternativeContract.FinalPrice,
-                StartDate = alternativeContract.StartDate,
-                EndDate = alternativeContract.EndDate,
-                YearsOfSupport = alternativeContract.YearsOfSupport,
-                SoftwareName = alternativeContract.SoftwareVersion.Software.Name,
-                SoftwareVersion = alternativeContract.SoftwareVersion.Version
-            };
+            return (false,
+                new AlternativeContractResponseModel
+                {
+                    ContractId = alternativeContract.IdContract,
+                    ClientId = alternativeContract.IdClient,
+                    FinalPrice = alternativeContract.FinalPrice,
+                    StartDate = alternativeContract.StartDate,
+                    EndDate = alternativeContract.EndDate,
+                    YearsOfSupport = alternativeContract.YearsOfSupport,
+                    SoftwareName = alternativeContract.SoftwareVersion.Software.Name,
+                    SoftwareVersion = alternativeContract.SoftwareVersion.Version
+                });
         }
 
         var payment = new ContractPayment(amount, contract);
@@ -83,7 +85,7 @@ public class ContractsService(
 
         await contractsRepository.RegisterPaymentAsync(payment);
         await contractsRepository.SaveChangesAsync();
-        return null;
+        return (contract.SignedAt != null, null);
     }
 
     public async Task DeleteContractByIdAsync(int clientId, int contractId)
@@ -201,7 +203,7 @@ public class ContractsService(
         var discount =
             await discountsRepository.GetBestActiveDiscountForContractAsync(startDate, endDate);
         var client = await GetClientWithBoughtProductsAsync(contract.IdClient);
-        
+
         client.EnsureHasNoActiveSoftware(contract.SoftwareVersion.Software);
         var finalPrice = ApplyAdditionalSupportCost(contract.YearsOfSupport, contract.SoftwareVersion);
         finalPrice = ApplyDiscounts(client, discount, finalPrice);

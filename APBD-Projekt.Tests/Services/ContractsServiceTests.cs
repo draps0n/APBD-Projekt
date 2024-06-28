@@ -500,12 +500,12 @@ public class ContractsServiceTests
             discountRepositoryMock.Object, null!);
 
         // Act
-        var result = await contractsService.PayForContractAsync(1, 1, 1m);
+        var (_, alternativeContract) = await contractsService.PayForContractAsync(1, 1, 1m);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.NotEqual(contract.StartDate, result.StartDate);
-        Assert.NotEqual(contract.EndDate, result.EndDate);
+        Assert.NotNull(alternativeContract);
+        Assert.NotEqual(contract.StartDate, alternativeContract.StartDate);
+        Assert.NotEqual(contract.EndDate, alternativeContract.EndDate);
     }
     
     [Fact]
@@ -534,10 +534,11 @@ public class ContractsServiceTests
             discountRepositoryMock.Object, null!);
 
         // Act
-        var result = await contractsService.PayForContractAsync(1, 1, 1m);
+        var (wasSigned, alternativeContract) = await contractsService.PayForContractAsync(1, 1, 1m);
 
         // Assert
-        Assert.Null(result);
+        Assert.Null(alternativeContract);
+        Assert.False(wasSigned);
         Assert.Null(contract.SignedAt);
     }
     
@@ -567,10 +568,11 @@ public class ContractsServiceTests
             discountRepositoryMock.Object, null!);
 
         // Act
-        var result = await contractsService.PayForContractAsync(1, 1, 2m);
+        var (wasSigned, alternativeContract) = await contractsService.PayForContractAsync(1, 1, 2m);
 
         // Assert
-        Assert.Null(result);
+        Assert.Null(alternativeContract);
+        Assert.True(wasSigned);
         Assert.NotNull(contract.SignedAt);
     }
 }

@@ -7,5 +7,5 @@ public interface IContractsService
 {
     Task<CreateContractResponseModel> CreateContractAsync(int clientId, CreateContractRequestModel requestModel);
     Task DeleteContractByIdAsync(int clientId, int contractId);
-    Task<CreateContractResponseModel?> PayForContractAsync(int clientId, int contractId, decimal amount);
+    Task<(bool, AlternativeContractResponseModel?)> PayForContractAsync(int clientId, int contractId, decimal amount);
 }
